@@ -179,18 +179,18 @@ public class Order{
     public String getAddress() { return address; }
   }
 
-  enum DeliveryMethod {
+  public enum DeliveryMethod {
     PICKUP,
     DELIVERY
   }
 
-  enum PaymentStatus {
+ public enum PaymentStatus {
     PENDING,
     PAID,
     FAILED,
   }
 
-  enum OrderStatus {
+ public enum OrderStatus {
     NEW,
     PACKAGING,
     READY,
