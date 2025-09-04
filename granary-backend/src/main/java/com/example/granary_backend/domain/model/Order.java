@@ -94,6 +94,11 @@ public class Order{
     if (this.orderStatus == OrderStatus.DELIVERED) {
       throw new IllegalStateException("Order is already delivered and cannot be advanced further");
     }
+
+    if (this.paymentStatus != PaymentStatus.PAID) {
+      throw new IllegalStateException("Order must be paid before advancing status");
+    }
+
     switch (this.orderStatus) {
       case NEW: this.orderStatus = OrderStatus.PACKAGING;
       break;
@@ -134,6 +139,13 @@ public class Order{
     return id;
   }
 
+  public PaymentStatus getPaymentStatus() {
+    return paymentStatus;
+  }
+
+  public OrderStatus getOrderStatus() {
+    return orderStatus;
+  }
 
   public static final class CustomerDetails {
     private static final Pattern EMAIL_PATTERN =
@@ -163,6 +175,12 @@ public class Order{
         throw new IllegalArgumentException("Customer address cannot be empty");
       }
     }
+
+    public static CustomerDetails create(String name, String phone,
+      String email, String address) {
+      return new CustomerDetails(name, phone, email, address);
+    }
+
     private String validateAndCleanEmail(String email) {
       if (email == null || email.trim().isEmpty()) {
         throw new IllegalArgumentException("Email cannot be null or empty");

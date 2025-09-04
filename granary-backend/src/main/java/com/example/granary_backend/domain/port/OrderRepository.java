@@ -1,4 +1,4 @@
-package com.example.granary_backend.port;
+package com.example.granary_backend.domain.port;
 
 import java.util.Optional;
 import java.util.List;

@@ -2,6 +2,7 @@ package com.example.granary_backend.domain.model;
 
 import java.time.LocalDateTime;
 import java.util.Objects;
+import java.util.Optional;
 
 /**
  * Domain model for a product in the inventory system.
@@ -130,32 +131,54 @@ public class Product {
         this.updatedAt = LocalDateTime.now();
     }
 
-    /**
-     * Updates product details.
-     */
-    public void updateDetails(String newName, String newSize, String newImageUrl, int newLowStockAlert) {
-        if (!this.isActive) {
-            throw new IllegalStateException("Cannot update details of an inactive product");
-        }
+  /**
+    * Updates product details.
+    */
+  public void updateDetails(Optional<String> name, Optional<String> size,
+                            Optional<Integer> priceCents, Optional<Integer> stockQuantity,
+                            Optional<Integer> lowStockAlert, Optional<String> imageUrl,
+                            Optional<Boolean> active) {
+    name.ifPresent(n -> {
+      if (n.trim().isEmpty()) {
+        throw new IllegalArgumentException("A product must have a name");
+      }
+      this.name = n.trim();
+    });
 
-        if (newName == null || newName.trim().isEmpty()) {
-            throw new IllegalArgumentException("A product must have a name");
-        }
-        this.name = newName;
-        if (newSize == null || newSize.trim().isEmpty()) {
-            throw new IllegalArgumentException("A product must have a size");
-        }
-        this.size = newSize;
+    size.ifPresent(s -> {
+      if (s.trim().isEmpty()) {
+        throw new IllegalArgumentException("A product must have a size");
+      }
+      this.size = s.trim();
+    });
 
-        this.imageUrl = newImageUrl;
+    priceCents.ifPresent(p -> {
+      if (p <= 0) {
+        throw new IllegalArgumentException("A product priceCents should be more than zero");
+      }
+      this.priceCents = p;
+    });
 
-        if (newLowStockAlert < 0) {
-            throw new IllegalArgumentException("A product lowStockAlert should be positive");
-        }
-        this.lowStockAlert = newLowStockAlert;
+    stockQuantity.ifPresent(sq -> {
+      if (sq < 0) {
+        throw new IllegalArgumentException("A product stockQuantity should be positive");
+      }
+      this.stockQuantity = sq;
+    });
 
-        this.updatedAt = LocalDateTime.now();
-    }
+    lowStockAlert.ifPresent(lsa -> {
+      if (lsa < 0) {
+        throw new IllegalArgumentException("A product lowStockAlert should be positive");
+      }
+      this.lowStockAlert = lsa;
+    });
+
+    imageUrl.ifPresent(url -> this.imageUrl = url.trim());
+
+    active.ifPresent(a -> this.isActive = a);
+
+    this.updatedAt = LocalDateTime.now();
+  }
 
     // Getters
 
