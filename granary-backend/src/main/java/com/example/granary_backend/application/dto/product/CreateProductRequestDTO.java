@@ -7,6 +7,5 @@ public record CreateProductRequestDTO(
   int priceCents,
   int stockQuantity,
   int lowStockAlert,
-  String imageUrl,
-  boolean active
+  String imageUrl
 ) {}
