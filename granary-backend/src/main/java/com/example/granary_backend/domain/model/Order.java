@@ -139,6 +139,38 @@ public class Order{
     return id;
   }
 
+  public Product getProduct() {
+    return product
+  }
+
+  public int getQuantityOrdered() {
+    return quantityOrdered;
+  }
+
+  public int getTotalAmountCents() {
+    return totalAmountCents;
+  }
+
+  public CustomerDetails getCustomerDetails() {
+    return customerDetails;
+  }
+
+  public String getMpesaTransactionId() {
+    return mpesaTransactionId;
+  }
+
+  public LocalDateTime getCreatedAt() {
+    return createdAt;
+  }
+
+  public LocalDateTime getUpdatedAt() {
+    return updatedAt;
+  }
+
+  public DeliveryMethod getDeliveryMethod() {
+    return deliveryMethod;
+  }
+
   public PaymentStatus getPaymentStatus() {
     return paymentStatus;
   }
