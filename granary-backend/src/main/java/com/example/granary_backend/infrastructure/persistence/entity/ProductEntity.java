@@ -76,6 +76,7 @@ public class ProductEntity {
   public int getPriceCents() { return this.priceCents; }
   public int getStockQuantity() { return this.stockQuantity; }
   public int getLowStockAlert() { return this.lowStockAlert; }
+  public String getImageUrl() { return this.imageUrl; }
   public boolean isActive() { return this.isActive; }
   public LocalDateTime getCreatedAt() { return this.createdAt; }
   public LocalDateTime getUpdatedAt() { return this.updatedAt; }

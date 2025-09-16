@@ -11,4 +11,7 @@ import com.example.granary_backend.domain.model.ProductId;
    List<Product> findAll();
    void save(Product product);
    void delete(ProductId id);
+   List<Product> findActiveProducts();
+   List<Product> findLowStockProducts(int threshold);
+   List<Product> searchByName(String name);
  }

@@ -9,75 +9,81 @@ import java.util.Optional;
  * Provides validation, stock management, and status update methods.
  */
 public class Product {
+  private final ProductId id;
+  private String name;
+  private String size;
+  private int priceCents;
+  private int stockQuantity;
+  private int lowStockAlert;
+  private String imageUrl;
+  private boolean isActive;
+  private final LocalDateTime createdAt;
+  private LocalDateTime updatedAt;
 
-    private final ProductId id;
-    private String name;
-    private String size;
-    private int priceCents;
-    private int stockQuantity;
-    private int lowStockAlert;
-    private String imageUrl;
-    private boolean isActive;
-    private final LocalDateTime createdAt;
-    private LocalDateTime updatedAt;
+  /**
+    * Creates a new Product instance.
+    */
+  private Product(ProductId id, String name, String size, int priceCents,
+                   int stockQuantity, int lowStockAlert, String imageUrl,
+                  boolean isActive, LocalDateTime createdAt, LocalDateTime updatedAt) {
+    this.id = Objects.requireNonNull(id, "A product must have an id");
 
-    /**
-     * Creates a new Product instance.
-     */
-    private Product(ProductId id, String name, String size, int priceCents,
-                    int stockQuantity, int lowStockAlert, String imageUrl,
-                    boolean isActive, LocalDateTime createdAt, LocalDateTime updatedAt) {
-        this.id = Objects.requireNonNull(id, "A product must have an id");
-
-        if (name == null || name.trim().isEmpty()) {
-            throw new IllegalArgumentException("A product must have a name");
-        }
-        this.name = name;
-
-        if (size == null || size.trim().isEmpty()) {
-            throw new IllegalArgumentException("A product must have a size");
-        }
-        this.size = size;
-
-        if (priceCents <= 0) {
-            throw new IllegalArgumentException("A product priceCents should be more than zero");
-        }
-        this.priceCents = priceCents;
-
-        if (stockQuantity < 0) {
-            throw new IllegalArgumentException("A product stockQuantity should be positive");
-        }
-        this.stockQuantity = stockQuantity;
-        if (lowStockAlert < 0) {
-            throw new IllegalArgumentException("A product lowStockAlert should be positive");
-        }
-        this.lowStockAlert = lowStockAlert;
-
-        this.imageUrl = imageUrl;
-
-        this.isActive = isActive;
-
-        if (createdAt.isAfter(LocalDateTime.now())) {
-            throw new IllegalArgumentException("A product createdAt cannot be in the future");
-        }
-        this.createdAt = Objects.requireNonNull(createdAt, "A product must have a createdAt date");
-
-        if (updatedAt.isBefore(createdAt)) {
-            throw new IllegalArgumentException("A product updatedAt cannot be before createdAt");
-        }
-        this.updatedAt = createdAt;
+    if (name == null || name.trim().isEmpty()) {
+        throw new IllegalArgumentException("A product must have a name");
     }
+    this.name = name;
 
-    /**
-     * Factory method to create a new Product.
-     */
-    public static Product create(ProductId id, String name, String size, int priceCents,
-                                 int stockQuantity, int lowStockAlert, String imageUrl, boolean isActive) {
-        LocalDateTime now = LocalDateTime.now();
-
-        return new Product(id, name, size, priceCents, stockQuantity,
-                lowStockAlert, imageUrl, isActive, now, now);
+    if (size == null || size.trim().isEmpty()) {
+      throw new IllegalArgumentException("A product must have a size");
     }
+    this.size = size;
+
+    if (priceCents <= 0) {
+        throw new IllegalArgumentException("A product priceCents should be more than zero");
+    }
+    this.priceCents = priceCents;
+
+    if (stockQuantity < 0) {
+      throw new IllegalArgumentException("A product stockQuantity should be positive");
+    }
+    this.stockQuantity = stockQuantity;
+
+    if (lowStockAlert < 0) {
+      throw new IllegalArgumentException("A product lowStockAlert should be positive");
+    }
+    this.lowStockAlert = lowStockAlert;
+
+    this.imageUrl = imageUrl;
+
+    this.isActive = isActive;
+
+    if (createdAt.isAfter(LocalDateTime.now())) {
+      throw new IllegalArgumentException("A product createdAt cannot be in the future");
+    }
+    this.createdAt = Objects.requireNonNull(createdAt, "A product must have a createdAt date");
+
+    if (updatedAt.isBefore(createdAt)) {
+        throw new IllegalArgumentException("A product updatedAt cannot be before createdAt");
+    }
+    this.updatedAt = createdAt;
+  }
+
+  /**
+    * Factory method to create a new Product.
+    */
+  public static Product create(ProductId id, String name, String size, int priceCents,
+                                int stockQuantity, int lowStockAlert, String imageUrl, boolean isActive) {
+    LocalDateTime now = LocalDateTime.now();
+    return new Product(id, name, size, priceCents, stockQuantity,
+      lowStockAlert, imageUrl, isActive, now, now);
+  }
+
+  public static Product reconstitute(ProductId id, String name, String size, int priceCents,
+    int stockQuantity, int lowStockAlert, String imageUrl, boolean isActive,
+    LocalDateTime createdAt, LocalDateTime updatedAt){
+
+    return new Product(id, name, size, priceCents, stockQuantity, lowStockAlert, imageUrl, isActive, createdAt, updatedAt);
+  }
 
     /**
      * Increases the stock quantity by the given amount.
