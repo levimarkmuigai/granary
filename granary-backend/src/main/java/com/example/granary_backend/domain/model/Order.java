@@ -140,7 +140,7 @@ public class Order{
   }
 
   public Product getProduct() {
-    return product
+    return product;
   }
 
   public int getQuantityOrdered() {
