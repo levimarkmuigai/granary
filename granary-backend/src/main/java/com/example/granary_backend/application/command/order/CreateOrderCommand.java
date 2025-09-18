@@ -1,12 +1,14 @@
 package com.example.granary_backend.application.command.order;
 
+import java.util.List;
 import java.util.Objects;
 import java.util.regex.Pattern;
 
+import com.example.granary_backend.domain.model.Order;
+
 public final class CreateOrderCommand {
 
-  private final String productId;
-  private final int quantityOrdered;
+  private final List<OrderLineCommand> orderLines;
   private final String customerName;
   private final String customerEmail;
   private final String customerPhone;
@@ -16,15 +18,16 @@ public final class CreateOrderCommand {
   private static final Pattern EMAIL_PATTERN =
       Pattern.compile("^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+$");
 
-  public CreateOrderCommand(String productId, int quantityOrdered, String customerName,
-                            String customerEmail, String customerPhone, String customerAddress,
-                            String deliveryMethod) {
+  public CreateOrderCommand(List<OrderLineCommand> orderLines,
+    String customerName,
+    String customerEmail,
+    String customerPhone,
+    String customerAddress,
+    String deliveryMethod
+  ) {
 
-    this.productId = Objects.requireNonNull(productId, "Product ID cannot be null");
-    if (quantityOrdered <= 0) {
-      throw new IllegalArgumentException("Quantity ordered must be greater than zero");
-    }
-    this.quantityOrdered = quantityOrdered;
+    Objects.requireNonNull(orderLines, "Order must contain at least one product line");
+    this.orderLines = List.copyOf(orderLines);
 
     Objects.requireNonNull(customerName, "Customer name cannot be null");
     if (customerName.isBlank()) {
@@ -57,11 +60,8 @@ public final class CreateOrderCommand {
   }
 
   // Getters
-  public String getProductId() {
-    return productId;
-  }
-  public int getQuantityOrdered() {
-    return quantityOrdered;
+  public List<OrderLineCommand> getOrderLines() {
+    return orderLines;
   }
   public String getCustomerName() {
     return customerName;
@@ -82,8 +82,7 @@ public final class CreateOrderCommand {
   @Override
   public String toString() {
     return "CreateOrderCommand{" +
-        "productId='" + productId + '\'' +
-        ", quantityOrdered=" + quantityOrdered +
+        "orderLines='" + orderLines + '\'' +
         ", customerName='" + customerName + '\'' +
         ", customerEmail='" + customerEmail + '\'' +
         ", customerPhone='" + customerPhone + '\'' +
@@ -105,5 +104,24 @@ public final class CreateOrderCommand {
     }
 
     return cleanEmail;
+  }
+
+  public final static class OrderLineCommand {
+    private final String productId;
+    private final int quantity;
+
+    public OrderLineCommand(String productId, int quantity) {
+      Objects.requireNonNull(productId, "productId cannot be null");
+      if(productId.isBlank()) {
+        throw new IllegalArgumentException("productId cannot be blank");
+      }
+
+      this.productId = productId;
+
+      this.quantity = quantity;
+    }
+
+    public String getProductId() { return productId; }
+    public int getQuantity() { return quantity; }
   }
 }

@@ -1,14 +1,15 @@
 package com.example.granary_backend.domain.model;
 
-import java.util.Objects;
-import java.util.regex.Pattern;
 import java.time.LocalDateTime;
+import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.regex.Pattern;
 
-public class Order{
+public final class Order {
+
   private final OrderId id;
-  private final Product product;
-  private int quantityOrdered;
-  private int totalAmountCents;
+  private List<OrderLine> orderLines;
   private CustomerDetails customerDetails;
   private DeliveryMethod deliveryMethod;
   private PaymentStatus paymentStatus;
@@ -17,59 +18,52 @@ public class Order{
   private LocalDateTime createdAt;
   private LocalDateTime updatedAt;
 
-  private Order(OrderId id, Product product, int quantityOrdered, int totalAmountCents,
-    CustomerDetails customerDetails, DeliveryMethod deliveryMethod,
+   private Order(OrderId id, List<OrderLine> orderLines, CustomerDetails customerDetails, DeliveryMethod deliveryMethod,
     PaymentStatus paymentStatus,OrderStatus orderStatus,LocalDateTime createdAt, LocalDateTime updatedAt) {
 
-    this.id = id;
-    this.product = product;
-    this.quantityOrdered = quantityOrdered;
-    this.totalAmountCents = totalAmountCents;
-    if(this.totalAmountCents <= 0) {
-      throw new IllegalArgumentException("Order totalAmountCents must be greater than zero");
+    if (createdAt.isAfter(LocalDateTime.now())) {
+      throw new IllegalArgumentException("Order createdAt cannot be in the future");
     }
+
+    this.id = id;
+    this.orderLines = orderLines;
     this.customerDetails = customerDetails;
     this.deliveryMethod = deliveryMethod;
     this.paymentStatus = paymentStatus;
     this.orderStatus = orderStatus;
-    if (createdAt.isAfter(LocalDateTime.now())) {
-      throw new IllegalArgumentException("Order createdAt cannot be in the future");
-    }
     this.createdAt = Objects.requireNonNull(createdAt, "Order must have a createdAt timestamp");
     this.updatedAt = createdAt;
   }
 
-  public static Order create(OrderId id, Product product,int quantityOrdered,
-    CustomerDetails customerDetails,DeliveryMethod deliveryMethod) {
-    if (id == null) {
-      throw new IllegalArgumentException("Order must have an id");
+  public static Order createFromOrderLines(OrderId id, List<OrderLine> orderLines,
+        CustomerDetails customerDetails, DeliveryMethod deliveryMethod) {
+
+    if (orderLines == null || orderLines.isEmpty()) {
+        throw new IllegalArgumentException("Order must have at least one order line");
     }
-    if (quantityOrdered <= 0) {
-      throw new IllegalArgumentException("Order quantityOrdered must be greater than zero");
-    }
-    if (customerDetails == null) {
-      throw new IllegalArgumentException("Order must have customer details");
-    }
-    if (deliveryMethod == null) {
-      throw new IllegalArgumentException("Order must have a delivery method");
-    }
+
     LocalDateTime now = LocalDateTime.now();
 
     return new Order(
-      id,
-      product,
-      quantityOrdered,
-      product.getPriceCents() * quantityOrdered,
-      customerDetails,
-      deliveryMethod,
-      PaymentStatus.PENDING,
-      OrderStatus.NEW,
-      now,
-      now
+        id,
+        orderLines,
+        customerDetails,
+        deliveryMethod,
+        PaymentStatus.PENDING,
+        OrderStatus.NEW,
+        now,
+        now
     );
   }
 
-  public void markAsPaid(String mpesaTransactionId) {
+    public int getTotalAmountCents() {
+    return orderLines
+    .stream()
+    .mapToInt(OrderLine::getLineTotalCents)
+    .sum();
+  }
+
+    public void markAsPaid(String mpesaTransactionId) {
     if(mpesaTransactionId == null || mpesaTransactionId.trim().isEmpty()) {
       throw new IllegalArgumentException("Mpesa transaction ID cannot be null or empty");
     }
@@ -127,28 +121,12 @@ public class Order{
     this.updatedAt = LocalDateTime.now();
   }
 
-  public void recalculateTotalAmount() {
-    if (this.product == null) {
-      throw new IllegalStateException("Cannot calculate total amount without a product");
-    }
-    this.totalAmountCents = this.product.getPriceCents() * this.quantityOrdered;
-    this.updatedAt = LocalDateTime.now();
-  }
-
-  public OrderId getId() {
+   public OrderId getId() {
     return id;
   }
 
-  public Product getProduct() {
-    return product;
-  }
-
-  public int getQuantityOrdered() {
-    return quantityOrdered;
-  }
-
-  public int getTotalAmountCents() {
-    return totalAmountCents;
+  public List<OrderLine> getOrderLines() {
+    return List.copyOf(orderLines);
   }
 
   public CustomerDetails getCustomerDetails() {
@@ -177,6 +155,47 @@ public class Order{
 
   public OrderStatus getOrderStatus() {
     return orderStatus;
+  }
+
+  public static final class OrderLine {
+
+    private final ProductId productId;
+    private final String productName;
+    private final int unitPriceCents;
+    private final int quantityOrdered;
+    private final int lineTotalCents;
+
+    private OrderLine(ProductId productId, String productName,
+      int unitPriceCents, int quantityOrdered) {
+
+      if (unitPriceCents <= 0) {
+        throw new IllegalArgumentException("unitPriceCents must be more than zero");
+      }
+
+      if (quantityOrdered <= 0) {
+        throw new IllegalArgumentException("quantityOrdered must be more than zero");
+      }
+
+      this.productId = productId;
+      this.productName = productName;
+      this.unitPriceCents = unitPriceCents;
+      this.quantityOrdered = quantityOrdered;
+      this.lineTotalCents = quantityOrdered * unitPriceCents;
+
+    }
+
+    public static OrderLine create(ProductId productId, String productName,
+      int unitPriceCents, int quantityOrdered) {
+
+      return new OrderLine(productId, productName, unitPriceCents, quantityOrdered);
+    }
+
+    public ProductId getProductId() { return this.productId; }
+    public String getProductName() { return this.productName; }
+    public int getUnitPriceCents() { return this.unitPriceCents; }
+    public int getQuantityOrdered() { return this.quantityOrdered; }
+    public int getLineTotalCents() { return this.lineTotalCents; }
+
   }
 
   public static final class CustomerDetails {
@@ -228,8 +247,7 @@ public class Order{
     public String getEmail() { return email; }
     public String getAddress() { return address; }
   }
-
-  public enum DeliveryMethod {
+   public enum DeliveryMethod {
     PICKUP,
     DELIVERY
   }
@@ -247,4 +265,3 @@ public class Order{
     DELIVERED,
   }
 }
-

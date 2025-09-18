@@ -1,5 +1,6 @@
 package com.example.granary_backend.application.dto.order;
 
+import java.util.List;
 import java.util.Objects;
 
 import com.example.granary_backend.application.command.order.AdvanceOrderCommand;
@@ -8,28 +9,32 @@ import com.example.granary_backend.application.command.order.MarkOrderPaidComman
 import com.example.granary_backend.application.dto.order.CreateOrderRequestDTO;
 import com.example.granary_backend.domain.model.Order;
 
-public class OrderMapper {
+public final class OrderMapper {
+
+  private OrderMapper() {}
 
   public CreateOrderCommand toCreateCommand(CreateOrderRequestDTO dto) {
     Objects.requireNonNull(dto, "CreateOrderRequestDTO must not be null");
 
-    var productId = dto.productId();
+    Objects.requireNonNull(dto.orderLines(), "OrderLine must not be null");
+    if(dto.orderLines().isEmpty()){
+      throw new IllegalArgumentException("Order must contain at least one order line");
+    }
 
-    var quantityOrdered = dto.quantityOrdered();
-    var customerName = dto.customerName();
-    var customerEmail = dto.customerEmail();
-    var customerPhone = dto.customerPhone();
-    var customerAddress = dto.customerAddress();
-    var deliveryMethod = dto.deliveryMethod();
+    var orderLineCommands = dto.orderLines().stream()
+    .map(line -> new CreateOrderCommand.OrderLineCommand(
+      Objects.requireNonNull(line.productId(), "productId cannot be null"),
+      line.quantityOrdered()
+    ))
+    .toList();
 
     return new CreateOrderCommand(
-      productId,
-      quantityOrdered,
-      customerName,
-      customerEmail,
-      customerPhone,
-      customerAddress,
-      deliveryMethod
+      orderLineCommands,
+      dto.customerName(),
+      dto.customerEmail(),
+      dto.customerPhone(),
+      dto.customerAddress(),
+      dto.deliveryMethod()
     );
   }
 
@@ -52,52 +57,31 @@ public class OrderMapper {
   public OrderResponseDTO toResponseDTO(Order order) {
     Objects.requireNonNull(order, "Order must not be null");
 
-    var orderId = order.getId().toString();
+    List<OrderLineResponseDTO> orderLineDTOs = order.getOrderLines().stream()
+    .map(line -> new OrderLineResponseDTO(
+      line.getProductId().toString(),
+      line.getProductName(),
+      line.getUnitPriceCents(),
+      line.getQuantityOrdered(),
+      line.getLineTotalCents()
+    ))
+    .toList();
 
-    var productId = order.getProduct().getId().toString();
-
-    var productName = order.getProduct().getName();
-
-    var quantityOrdered = order.getQuantityOrdered();
-
-    var totalAmountCents = order.getTotalAmountCents();
-
-    var customerName = order.getCustomerDetails().getName();
-
-    var customerEmail = order.getCustomerDetails().getEmail();
-
-    var customerPhone = order.getCustomerDetails().getPhone();
-
-    var customerAddress = order.getCustomerDetails().getAddress();
-
-    var deliveryMethod = order.getDeliveryMethod().name();
-
-    var paymentStatus = order.getPaymentStatus().name();
-
-    var orderStatus = order.getOrderStatus().name();
-
-    var mpesaTransactionId = order.getMpesaTransactionId();
-
-    var createdAt = order.getCreatedAt();
-
-    var updatedAt = order.getUpdatedAt();
+    Order.CustomerDetails customer = order.getCustomerDetails();
 
     return new OrderResponseDTO(
-      orderId,
-      productId,
-      productName,
-      quantityOrdered,
-      totalAmountCents,
-      customerName,
-      customerEmail,
-      customerPhone,
-      customerAddress,
-      deliveryMethod,
-      paymentStatus,
-      orderStatus,
-      mpesaTransactionId,
-      createdAt,
-      updatedAt
+      order.getId().toString(),
+      orderLineDTOs,
+      customer.getName(),
+      customer.getEmail(),
+      customer.getPhone(),
+      customer.getAddress(),
+      order.getDeliveryMethod().name().toLowerCase(),
+      order.getPaymentStatus().name(),
+      order.getOrderStatus().name(),
+      order.getMpesaTransactionId(),
+      order.getCreatedAt(),
+      order.getUpdatedAt()
     );
   }
 }

@@ -1,10 +1,12 @@
 package com.example.granary_backend.application.service;
 
+import java.util.List;
 import java.util.Objects;
 
 import com.example.granary_backend.application.command.order.AdvanceOrderCommand;
 import com.example.granary_backend.application.command.order.CreateOrderCommand;
 import com.example.granary_backend.application.command.order.MarkOrderPaidCommand;
+import com.example.granary_backend.application.command.order.CreateOrderCommand.OrderLineCommand;
 import com.example.granary_backend.domain.model.Order;
 import com.example.granary_backend.domain.model.OrderId;
 import com.example.granary_backend.domain.model.ProductId;
@@ -27,17 +29,32 @@ public class OrderService{
   public OrderId createOrder(CreateOrderCommand command){
     Objects.requireNonNull(command, "CreateOrderCommand cannot be null");
 
-    var productId = ProductId.fromString(command.getProductId());
+    List<Order.OrderLine> orderLines = command.getOrderLines().stream()
+    .map(lineCmd -> {
+      ProductId productId = ProductId.fromString(lineCmd.getProductId());
 
-    var product = productRepository.findById(productId)
-        .orElseThrow(() -> new IllegalArgumentException("Product not found with ID: " + command.getProductId()));
-    if (!product.isActive()) {
-      throw new IllegalArgumentException("Product is not active for ID: " + command.getProductId());
-    }
+      var product = productRepository.findById(productId)
+      .orElseThrow(() -> new IllegalArgumentException(
+        "Product not found with id" + productId));
 
-    if (product.isActive() && product.getStockQuantity() < command.getQuantityOrdered()) {
-      throw new IllegalArgumentException("Insufficient stock for product ID: " + command.getProductId());
-    }
+      if(!product.isActive()) {
+        throw new IllegalArgumentException(
+          "Product is not active with ID:" + productId);
+      }
+
+      if(product.getStockQuantity() < lineCmd.getQuantity()) {
+        throw new IllegalArgumentException(
+          "Insuffceint stock for produc ID:" + productId);
+      }
+
+      return Order.OrderLine.create(
+        product.getId(),
+        product.getName(),
+        product.getPriceCents(),
+        lineCmd.getQuantity()
+      );
+    }).
+    toList();
 
     Order.CustomerDetails customerDetails = new Order.CustomerDetails(
       command.getCustomerName(),
@@ -52,15 +69,14 @@ public class OrderService{
       default -> throw new IllegalArgumentException("Invalid delivery method: " + command.getDeliveryMethod());
     };
 
-    Order order = Order.create(
-      OrderId.createNew(),
-      product,
-      command.getQuantityOrdered(),
-      customerDetails,
-      deliveryMethod
+    Order order = Order.createFromOrderLines(
+        OrderId.createNew(),
+        orderLines,
+        customerDetails,
+        deliveryMethod
     );
-    orderRepository.save(order);
 
+    orderRepository.save(order);
     return order.getId();
 
   }
@@ -100,4 +116,5 @@ public class OrderService{
     orderRepository.save(order);
     return order.getId();
   }
+
 }
