@@ -56,6 +56,10 @@ public class ProductEntity {
 
   protected ProductEntity() {}
 
+  public ProductEntity(UUID id) {
+    this.id =  id;
+  }
+
   public ProductEntity(UUID id, String name, String size, int priceCents, int stockQuantity, String imageUrl,
     int lowStockAlert, boolean isActive, LocalDateTime createdAt, LocalDateTime updatedAt) {
     this.id = id;

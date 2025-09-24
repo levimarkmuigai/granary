@@ -1,6 +1,8 @@
 package com.example.granary_backend.infrastructure.persistence.entity;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 import org.hibernate.annotations.CreationTimestamp;
@@ -9,18 +11,15 @@ import org.hibernate.annotations.UpdateTimestamp;
 import com.example.granary_backend.domain.model.Order.DeliveryMethod;
 import com.example.granary_backend.domain.model.Order.OrderStatus;
 import com.example.granary_backend.domain.model.Order.PaymentStatus;
-import com.example.granary_backend.infrastructure.persistence.entity.ProductEntity;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
-import jakarta.persistence.FetchType;
 import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
-import jakarta.validation.constraints.Min;
 
 @Entity
 @Table(name = "orders")
@@ -29,17 +28,8 @@ public class OrderEntity {
   @Id
   private UUID id;
 
-  @ManyToOne(fetch = FetchType.LAZY, optional = false)
-  @JoinColumn(name = "product_id", nullable = false)
-  private ProductEntity product;
-
-  @Column(name = "quantity_ordered", nullable = false)
-  @Min(1)
-  private int quantityOrdered;
-
-  @Column(name = "total_amount_cents", nullable = false)
-  @Min(1)
-  private int totalAmountCents;
+  @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, orphanRemoval = true)
+  private List<OrderLineEntity> orderLines = new ArrayList<>();
 
   @Column(name = "mpesa_transaction_id")
   private String mpesaTransactionId;
@@ -78,15 +68,17 @@ public class OrderEntity {
 
   protected OrderEntity () {}
 
-  public OrderEntity(UUID id, ProductEntity product ,int quantityOrdered, int totalAmountCents,
+  public OrderEntity(UUID id,List<OrderLineEntity> orderLines,
     String mpesaTransactionId,LocalDateTime createdAt, LocalDateTime updatedAt,
     DeliveryMethod deliveryMethod,PaymentStatus paymentStatus, OrderStatus orderStatus,
     String customerName, String customerPhone, String customerAddress, String customerEmail) {
 
     this.id = id;
-    this.product = product;
-    this.quantityOrdered = quantityOrdered;
-    this.totalAmountCents = totalAmountCents;
+    this.orderLines = orderLines;
+    for(OrderLineEntity line : orderLines){
+      line.assignToOrder(this);
+    }
+
     this.mpesaTransactionId = mpesaTransactionId;
     this.createdAt = createdAt;
     this.updatedAt = updatedAt;
@@ -100,9 +92,7 @@ public class OrderEntity {
   }
 
   public UUID getId() { return this.id; }
-  public ProductEntity getProduct() { return this.product; }
-  public int getQuantityOrdered() { return this.quantityOrdered; }
-  public int getTotalAmountCents() { return this.totalAmountCents; }
+  public List<OrderLineEntity> getOrderLines() { return this.orderLines; }
   public String getMpesaTransactionId() { return this.mpesaTransactionId; }
   public LocalDateTime getCreatedAt() { return this.createdAt; }
   public LocalDateTime getUpdatedAt() { return this.updatedAt; }

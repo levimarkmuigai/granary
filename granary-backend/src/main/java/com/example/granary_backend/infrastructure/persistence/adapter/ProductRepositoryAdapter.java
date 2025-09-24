@@ -3,8 +3,6 @@ package com.example.granary_backend.infrastructure.persistence.adapter;
 import java.util.List;
 import java.util.Optional;
 
-import javax.print.DocFlavor.STRING;
-
 import org.springframework.stereotype.Component;
 
 import com.example.granary_backend.domain.model.Product;
@@ -15,7 +13,7 @@ import com.example.granary_backend.infrastructure.persistence.entity.ProductEnti
 import com.example.granary_backend.infrastructure.persistence.repository.ProductJpaRepository;
 
 @Component
-public class ProductRepositoryAdapter  implements ProductRepository{
+public class ProductRepositoryAdapter implements ProductRepository{
 
   private final ProductJpaRepository jpaRepository;
   private final ProductMapper mapper;
