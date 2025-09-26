@@ -4,7 +4,7 @@ import java.util.List;
 import java.util.Optional;
 
 import com.example.granary_backend.domain.model.Product;
-import com.example.granary_backend.domain.model.ProductId;
+import com.example.granary_backend.domain.model.value.ProductId;
 
  public interface ProductRepository {
    Optional<Product> findById(ProductId id);

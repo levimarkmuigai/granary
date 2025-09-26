@@ -8,8 +8,8 @@ import java.util.UUID;
 import org.springframework.stereotype.Component;
 
 import com.example.granary_backend.domain.model.Order;
-import com.example.granary_backend.domain.model.OrderId;
-import com.example.granary_backend.domain.model.ProductId;
+import com.example.granary_backend.domain.model.value.OrderId;
+import com.example.granary_backend.domain.model.value.ProductId;
 import com.example.granary_backend.domain.model.Order.OrderLine;
 import com.example.granary_backend.infrastructure.persistence.entity.OrderEntity;
 import com.example.granary_backend.infrastructure.persistence.entity.OrderLineEntity;
@@ -24,10 +24,14 @@ public final class OrderMapper {
   ){
     Objects.requireNonNull(order, "Order must not be null");
 
+    String mpesaTransactionId = order.getMpesaTransactionId() != null
+      ? order.getMpesaTransactionId().toString()
+      : null;
+
     OrderEntity entity = new OrderEntity(
       order.getId().getValue(),
       new ArrayList<>(),
-      order.getMpesaTransactionId(),
+      mpesaTransactionId,
       order.getCreatedAt(),
       order.getUpdatedAt(),
       order.getDeliveryMethod(),

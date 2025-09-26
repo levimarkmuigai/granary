@@ -1,4 +1,4 @@
-package com.example.granary_backend.domain.model;
+package com.example.granary_backend.domain.model.value;
 
 import java.util.UUID;
 

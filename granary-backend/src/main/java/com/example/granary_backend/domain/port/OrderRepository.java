@@ -5,7 +5,7 @@ import java.util.List;
 import java.time.LocalDateTime;
 
 import com.example.granary_backend.domain.model.Order;
-import com.example.granary_backend.domain.model.OrderId;
+import com.example.granary_backend.domain.model.value.OrderId;
 
 public interface OrderRepository {
   Optional<Order> findById(OrderId id);

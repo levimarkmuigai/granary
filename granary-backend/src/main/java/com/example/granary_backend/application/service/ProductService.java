@@ -5,7 +5,7 @@ import java.util.Objects;
 import com.example.granary_backend.application.command.product.UpdateProductCommand;
 import com.example.granary_backend.application.command.product.CreateProductCommand;
 import com.example.granary_backend.domain.model.Product;
-import com.example.granary_backend.domain.model.ProductId;
+import com.example.granary_backend.domain.model.value.ProductId;
 import com.example.granary_backend.domain.port.ProductRepository;
 
 public class ProductService {

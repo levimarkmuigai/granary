@@ -6,7 +6,7 @@ import java.util.Optional;
 import org.springframework.stereotype.Component;
 
 import com.example.granary_backend.domain.model.Product;
-import com.example.granary_backend.domain.model.ProductId;
+import com.example.granary_backend.domain.model.value.ProductId;
 import com.example.granary_backend.domain.port.ProductRepository;
 import com.example.granary_backend.infrastructure.persistence.adapter.ProductMapper;
 import com.example.granary_backend.infrastructure.persistence.entity.ProductEntity;

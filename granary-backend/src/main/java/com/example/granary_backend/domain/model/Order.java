@@ -3,8 +3,11 @@ package com.example.granary_backend.domain.model;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Objects;
-import java.util.Optional;
 import java.util.regex.Pattern;
+
+import com.example.granary_backend.domain.model.value.ProductId;
+import com.example.granary_backend.domain.model.value.MpesaTransactionId;
+import com.example.granary_backend.domain.model.value.OrderId;
 
 public final class Order {
 
@@ -14,7 +17,7 @@ public final class Order {
   private DeliveryMethod deliveryMethod;
   private PaymentStatus paymentStatus;
   private OrderStatus orderStatus;
-  private String mpesaTransactionId;
+  private MpesaTransactionId mpesaTransactionId;
   private LocalDateTime createdAt;
   private LocalDateTime updatedAt;
 
@@ -63,15 +66,18 @@ public final class Order {
     .sum();
   }
 
-    public void markAsPaid(String mpesaTransactionId) {
-    if(mpesaTransactionId == null || mpesaTransactionId.trim().isEmpty()) {
-      throw new IllegalArgumentException("Mpesa transaction ID cannot be null or empty");
+    public void markAsPaid(MpesaTransactionId mpesaTransactionId) {
+    Objects.requireNonNull(mpesaTransactionId, "MpesaTransactionId cannot be null");
+    if (mpesaTransactionId.value().isBlank()) {
+      throw new IllegalArgumentException("MpesaTransactionId cannot be blank");
     }
     this.mpesaTransactionId = mpesaTransactionId;
 
     if(this.paymentStatus != PaymentStatus.PENDING) {
       throw new IllegalStateException("Order cannot be marked as paid if it is not pending");
     }
+
+    this.mpesaTransactionId = mpesaTransactionId;
     this.paymentStatus = PaymentStatus.PAID;
     this.updatedAt = LocalDateTime.now();
   }
@@ -133,7 +139,7 @@ public final class Order {
     return customerDetails;
   }
 
-  public String getMpesaTransactionId() {
+  public MpesaTransactionId getMpesaTransactionId() {
     return mpesaTransactionId;
   }
 

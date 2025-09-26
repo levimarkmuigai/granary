@@ -8,7 +8,7 @@ import java.util.Optional;
 import org.springframework.stereotype.Component;
 
 import com.example.granary_backend.domain.model.Order;
-import com.example.granary_backend.domain.model.OrderId;
+import com.example.granary_backend.domain.model.value.OrderId;
 import com.example.granary_backend.domain.port.OrderRepository;
 import com.example.granary_backend.infrastructure.persistence.entity.OrderEntity;
 import com.example.granary_backend.infrastructure.persistence.entity.ProductEntity;

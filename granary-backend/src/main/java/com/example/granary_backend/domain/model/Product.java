@@ -4,6 +4,8 @@ import java.time.LocalDateTime;
 import java.util.Objects;
 import java.util.Optional;
 
+import com.example.granary_backend.domain.model.value.ProductId;
+
 /**
  * Domain model for a product in the inventory system.
  * Provides validation, stock management, and status update methods.

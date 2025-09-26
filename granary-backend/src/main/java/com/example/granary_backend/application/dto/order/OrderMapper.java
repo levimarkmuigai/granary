@@ -69,6 +69,10 @@ public final class OrderMapper {
 
     Order.CustomerDetails customer = order.getCustomerDetails();
 
+    String mpesaTransactionId = order.getMpesaTransactionId() != null
+      ? order.getMpesaTransactionId().toString()
+      : null;
+
     return new OrderResponseDTO(
       order.getId().toString(),
       orderLineDTOs,
@@ -79,7 +83,7 @@ public final class OrderMapper {
       order.getDeliveryMethod().name().toLowerCase(),
       order.getPaymentStatus().name(),
       order.getOrderStatus().name(),
-      order.getMpesaTransactionId(),
+      mpesaTransactionId,
       order.getCreatedAt(),
       order.getUpdatedAt()
     );
