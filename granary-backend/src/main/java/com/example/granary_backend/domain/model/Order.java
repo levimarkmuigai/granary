@@ -78,7 +78,7 @@ public final class Order {
     }
 
     this.mpesaTransactionId = mpesaTransactionId;
-    this.paymentStatus = PaymentStatus.PAID;
+    this.paymentStatus = PaymentStatus.SUCCESS;
     this.updatedAt = LocalDateTime.now();
   }
 
@@ -95,19 +95,17 @@ public final class Order {
       throw new IllegalStateException("Order is already delivered and cannot be advanced further");
     }
 
-    if (this.paymentStatus != PaymentStatus.PAID) {
+    if (this.paymentStatus != PaymentStatus.SUCCESS) {
       throw new IllegalStateException("Order must be paid before advancing status");
     }
 
-    switch (this.orderStatus) {
-      case NEW: this.orderStatus = OrderStatus.PACKAGING;
-      break;
-      case PACKAGING: this.orderStatus = OrderStatus.READY;
-      break;
-      case READY: this.orderStatus = OrderStatus.DELIVERED;
-      break;
-      default: throw new IllegalStateException("Cannot advance order status from " + this.orderStatus + " to next status");
-    }
+
+    this.orderStatus = switch (this.orderStatus) {
+      case NEW -> OrderStatus.PACKAGING;
+      case PACKAGING -> OrderStatus.READY;
+      case READY -> OrderStatus.DELIVERED;
+      default -> throw new IllegalStateException("Unexpected value: " + this.orderStatus);
+    };
     this.updatedAt = LocalDateTime.now();
   }
 
@@ -260,14 +258,15 @@ public final class Order {
 
  public enum PaymentStatus {
     PENDING,
-    PAID,
+    SUCCESS,
     FAILED,
+    CANCELLED
   }
 
  public enum OrderStatus {
     NEW,
     PACKAGING,
     READY,
-    DELIVERED,
+    DELIVERED
   }
 }

@@ -2,6 +2,9 @@ package com.example.granary_backend.application.command.product;
 
 import java.util.Optional;
 
+import org.springframework.stereotype.Component;
+
+@Component
 public class UpdateProductCommand {
 
   private final String productId;
@@ -28,49 +31,15 @@ public class UpdateProductCommand {
     }
     this.productId = productId.trim();
 
-    this.name = name.map(n-> {
-      if (n.isBlank()) {
-        throw new IllegalArgumentException("Product name cannot be blank");
-      }
-      return n.trim();
-    });
+    this.name = name.map(String::trim);
+    this.size = size.map(String::trim);
+    this.imageUrl = imageUrl.map(String::trim);
 
-    this.size = size.map(sz -> {
-      if (sz.isBlank()) {
-        throw new IllegalArgumentException("Product size cannot be blank");
-      }
-      return sz.trim();
-    });
-
-    this.priceCents = priceCents.map(p -> {
-      if (p <= 0) {
-        throw new IllegalArgumentException("Product price must be greater than zero");
-      }
-      return p;
-    });
-
-    this.stockQuantity = stockQuantity.map(sq -> {
-      if (sq < 0) {
-        throw new IllegalArgumentException("Product stock quantity cannot be negative");
-      }
-      return sq;
-    });
-
-    this.lowStockAlert = lowStockAlert.map(lsa -> {
-      if (lsa < 0) {
-        throw new IllegalArgumentException("Low stock alert cannot be negative");
-      }
-      return lsa;
-    });
-
-    this.imageUrl = imageUrl.map(url -> {
-      if (url.isBlank()) {
-        throw new IllegalArgumentException("Image URL cannot be blank");
-      }
-      return url.trim();
-    });
-
+    this.priceCents = priceCents;
+    this.stockQuantity = stockQuantity;
+    this.lowStockAlert = lowStockAlert;
     this.active = active;
+
   }
 
   // Getters

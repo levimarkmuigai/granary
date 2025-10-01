@@ -74,10 +74,10 @@ public class Product {
     * Factory method to create a new Product.
     */
   public static Product create(ProductId id, String name, String size, int priceCents,
-                                int stockQuantity, int lowStockAlert, String imageUrl, boolean isActive) {
+                                int stockQuantity, int lowStockAlert, String imageUrl) {
     LocalDateTime now = LocalDateTime.now();
     return new Product(id, name, size, priceCents, stockQuantity,
-      lowStockAlert, imageUrl, isActive, now, now);
+      lowStockAlert, imageUrl, true, now, now);
   }
 
   public static Product reconstitute(ProductId id, String name, String size, int priceCents,

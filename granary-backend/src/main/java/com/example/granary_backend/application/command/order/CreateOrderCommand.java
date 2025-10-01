@@ -2,126 +2,96 @@ package com.example.granary_backend.application.command.order;
 
 import java.util.List;
 import java.util.Objects;
-import java.util.regex.Pattern;
 
-import com.example.granary_backend.domain.model.Order;
+import com.example.granary_backend.domain.model.Order.DeliveryMethod;
 
 public final class CreateOrderCommand {
 
   private final List<OrderLineCommand> orderLines;
-  private final String customerName;
-  private final String customerEmail;
-  private final String customerPhone;
-  private final String customerAddress;
-  private final String deliveryMethod;
+  private final CustomerDetailsCommand customerDetails;
+  private final DeliveryMethod deliveryMethod;
 
-  private static final Pattern EMAIL_PATTERN =
-      Pattern.compile("^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+$");
 
-  public CreateOrderCommand(List<OrderLineCommand> orderLines,
-    String customerName,
-    String customerEmail,
-    String customerPhone,
-    String customerAddress,
-    String deliveryMethod
+  public CreateOrderCommand(
+    List<OrderLineCommand> orderLines,
+    CustomerDetailsCommand customerDetails,
+    DeliveryMethod deliveryMethod
   ) {
 
-    Objects.requireNonNull(orderLines, "Order must contain at least one product line");
+    Objects.requireNonNull(orderLines, "orderLines cannot be null");
+    Objects.requireNonNull(customerDetails, "customerDetailsCommand cannot be null");
+    Objects.requireNonNull(deliveryMethod, "deliveryMethod cannot be null");
+
     this.orderLines = List.copyOf(orderLines);
-
-    Objects.requireNonNull(customerName, "Customer name cannot be null");
-    if (customerName.isBlank()) {
-      throw new IllegalArgumentException("Customer name cannot be blank");
-    }
-    this.customerName = customerName.trim();
-
-    this.customerEmail = validateEmail(customerEmail);
-
-    Objects.requireNonNull(customerPhone, "Customer phone cannot be null");
-    if (customerPhone.isBlank()) {
-      throw new IllegalArgumentException("Customer phone cannot be blank");
-    }
-    this.customerPhone = customerPhone.trim();
-
-    Objects.requireNonNull(customerAddress, "Customer address cannot be null");
-    if (customerAddress.isBlank()) {
-      throw new IllegalArgumentException("Customer address cannot be blank");
-    }
-    this.customerAddress = customerAddress.trim();
-
-    if (deliveryMethod == null || deliveryMethod.trim().isBlank()) {
-      throw new IllegalArgumentException("Delivery method cannot be null or blank");
-    }
-    String normalizedDeliveryMethod = deliveryMethod.trim().toLowerCase();
-    if (!normalizedDeliveryMethod.equals("pickup") && !normalizedDeliveryMethod.equals("delivery")) {
-      throw new IllegalArgumentException("Delivery method must be either 'pickup' or 'delivery'");
-    }
-    this.deliveryMethod = normalizedDeliveryMethod;
+    this.customerDetails = customerDetails;
+    this.deliveryMethod = deliveryMethod;
   }
 
   // Getters
   public List<OrderLineCommand> getOrderLines() {
     return orderLines;
   }
-  public String getCustomerName() {
-    return customerName;
+
+  public CustomerDetailsCommand getCustomerDetails() {
+    return customerDetails;
   }
-  public String getCustomerEmail() {
-    return customerEmail;
-  }
-  public String getCustomerPhone() {
-    return customerPhone;
-  }
-  public String getCustomerAddress() {
-    return customerAddress;
-  }
-  public String getDeliveryMethod() {
+  public DeliveryMethod getDeliveryMethod() {
     return deliveryMethod;
   }
 
   @Override
   public String toString() {
     return "CreateOrderCommand{" +
-        "orderLines='" + orderLines + '\'' +
-        ", customerName='" + customerName + '\'' +
-        ", customerEmail='" + customerEmail + '\'' +
-        ", customerPhone='" + customerPhone + '\'' +
-        ", customerAddress='" + customerAddress + '\'' +
-        ", deliveryMethod='" + deliveryMethod + '\'' +
-        '}';
+    "orderLines='" + orderLines + '\'' +
+    ", customerDetails='" + customerDetails + '\'' +
+    ", deliveryMethod='" + deliveryMethod + '\'' +
+    '}';
   }
 
-  private static String validateEmail(String email) {
-
-    if (email == null || email.trim().isEmpty()) {
-      throw new IllegalArgumentException("Email cannot be null or empty");
-    }
-
-    String cleanEmail = email.trim().toLowerCase();
-
-    if (!EMAIL_PATTERN.matcher(cleanEmail).matches()) {
-      throw new IllegalArgumentException("Invalid email format" + cleanEmail);
-    }
-
-    return cleanEmail;
-  }
-
-  public final static class OrderLineCommand {
+  public static final class OrderLineCommand {
     private final String productId;
     private final int quantity;
 
     public OrderLineCommand(String productId, int quantity) {
-      Objects.requireNonNull(productId, "productId cannot be null");
-      if(productId.isBlank()) {
-        throw new IllegalArgumentException("productId cannot be blank");
-      }
 
       this.productId = productId;
-
       this.quantity = quantity;
+
     }
 
     public String getProductId() { return productId; }
     public int getQuantity() { return quantity; }
+
+  }
+
+  public static final class CustomerDetailsCommand {
+    private final String name;
+    private final String email;
+    private final String phone;
+    private final String address;
+
+    public CustomerDetailsCommand(
+      String name,
+      String email,
+      String phone,
+      String address
+    ) {
+
+      this.name = Objects.requireNonNull(name, "Customer name cannot be null");
+      this.email = Objects.requireNonNull(email, "Customer email cannot be null");
+      this.phone = Objects.requireNonNull(phone, "Customer phone cannot be null");
+      this.address = Objects.requireNonNull(address, "Customer address cannot be null");
+    }
+
+    public String getName() { return name; }
+    public String getEmail() { return email; }
+    public String getPhone() { return phone; }
+    public String getAddress() { return address; }
+
+    @Override
+    public String toString() {
+      return "CustomerDetailsCommand{name='" + name + "', email='" + email + "'}";
+    }
+
   }
 }

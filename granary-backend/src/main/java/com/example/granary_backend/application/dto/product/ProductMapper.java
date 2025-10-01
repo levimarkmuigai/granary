@@ -13,7 +13,6 @@ public class ProductMapper {
   public CreateProductCommand toCreateCommand(CreateProductRequestDTO dto) {
     Objects.requireNonNull(dto, "CreateProductRequestDTO must not be null");
 
-    var id = dto.productId();
     var name = dto.name();
     var size = dto.size();
     var priceCents = dto.priceCents();
@@ -22,7 +21,6 @@ public class ProductMapper {
     var stockQuantity = dto.stockQuantity();
 
     return new CreateProductCommand(
-      id,
       name,
       size,
       priceCents,
@@ -36,10 +34,6 @@ public class ProductMapper {
     Objects.requireNonNull(dto, "UpdateProductRequestDTO must not be null");
 
     var productId = dto.productId();
-
-    if(productId.isBlank()){
-      throw new IllegalArgumentException("ProductId must not be blank");
-    }
 
     Optional<String> name = Optional.ofNullable(dto.name());
     Optional<Integer> priceCents = Optional.ofNullable(dto.priceCents());
