@@ -23,15 +23,15 @@ public class Product {
   private LocalDateTime updatedAt;
 
   /**
-    * Creates a new Product instance.
-    */
+   * Creates a new Product instance.
+   */
   private Product(ProductId id, String name, String size, int priceCents,
-                   int stockQuantity, int lowStockAlert, String imageUrl,
-                  boolean isActive, LocalDateTime createdAt, LocalDateTime updatedAt) {
+      int stockQuantity, int lowStockAlert, String imageUrl,
+      boolean isActive, LocalDateTime createdAt, LocalDateTime updatedAt) {
     this.id = Objects.requireNonNull(id, "A product must have an id");
 
     if (name == null || name.trim().isEmpty()) {
-        throw new IllegalArgumentException("A product must have a name");
+      throw new IllegalArgumentException("A product must have a name");
     }
     this.name = name;
 
@@ -41,7 +41,7 @@ public class Product {
     this.size = size;
 
     if (priceCents <= 0) {
-        throw new IllegalArgumentException("A product priceCents should be more than zero");
+      throw new IllegalArgumentException("A product priceCents should be more than zero");
     }
     this.priceCents = priceCents;
 
@@ -65,87 +65,88 @@ public class Product {
     this.createdAt = Objects.requireNonNull(createdAt, "A product must have a createdAt date");
 
     if (updatedAt.isBefore(createdAt)) {
-        throw new IllegalArgumentException("A product updatedAt cannot be before createdAt");
+      throw new IllegalArgumentException("A product updatedAt cannot be before createdAt");
     }
     this.updatedAt = createdAt;
   }
 
   /**
-    * Factory method to create a new Product.
-    */
+   * Factory method to create a new Product.
+   */
   public static Product create(ProductId id, String name, String size, int priceCents,
-                                int stockQuantity, int lowStockAlert, String imageUrl) {
+      int stockQuantity, int lowStockAlert, String imageUrl) {
     LocalDateTime now = LocalDateTime.now();
     return new Product(id, name, size, priceCents, stockQuantity,
-      lowStockAlert, imageUrl, true, now, now);
+        lowStockAlert, imageUrl, true, now, now);
   }
 
   public static Product reconstitute(ProductId id, String name, String size, int priceCents,
-    int stockQuantity, int lowStockAlert, String imageUrl, boolean isActive,
-    LocalDateTime createdAt, LocalDateTime updatedAt){
+      int stockQuantity, int lowStockAlert, String imageUrl, boolean isActive,
+      LocalDateTime createdAt, LocalDateTime updatedAt) {
 
-    return new Product(id, name, size, priceCents, stockQuantity, lowStockAlert, imageUrl, isActive, createdAt, updatedAt);
+    return new Product(id, name, size, priceCents, stockQuantity, lowStockAlert, imageUrl, isActive, createdAt,
+        updatedAt);
   }
 
-    /**
-     * Increases the stock quantity by the given amount.
-     */
-    public void increaseStock(int amount) {
-        if (amount <= 0) {
-            throw new IllegalArgumentException("Increase amount must be positive");
-        }
-        this.stockQuantity += amount;
-        this.updatedAt = LocalDateTime.now();
+  /**
+   * Increases the stock quantity by the given amount.
+   */
+  public void increaseStock(int amount) {
+    if (amount <= 0) {
+      throw new IllegalArgumentException("Increase amount must be positive");
     }
-
-    /**
-     * Decreases the stock quantity by the given amount.
-     */
-    public void decreaseStock(int amount) {
-        if (amount <= 0) {
-            throw new IllegalArgumentException("Decrease amount must be positive");
-        }
-        if (this.stockQuantity - amount < 0) {
-            throw new IllegalArgumentException("Insufficient stock to decrease by " + amount);
-        }
-        this.stockQuantity -= amount;
-        this.updatedAt = LocalDateTime.now();
-    }
-
-    /**
-     * Sets the product as active or inactive.
-     */
-    public void activate() {
-        this.isActive = true;
-        this.updatedAt = LocalDateTime.now();
-    }
-
-    /**
-     * Sets the product as inactive.
-     */
-    public void inactive() {
-        this.isActive = false;
-        this.updatedAt = LocalDateTime.now();
-    }
-
-    /**
-     * Updates the product price.
-     */
-    public void updatePrice(int newPriceCents) {
-        if (newPriceCents <= 0) {
-            throw new IllegalArgumentException("A product priceCents should be more than zero");
-        }
-        this.priceCents = newPriceCents;
-        this.updatedAt = LocalDateTime.now();
-    }
+    this.stockQuantity += amount;
+    this.updatedAt = LocalDateTime.now();
+  }
 
   /**
-    * Updates product details.
-    */
+   * Decreases the stock quantity by the given amount.
+   */
+  public void decreaseStock(int amount) {
+    if (amount <= 0) {
+      throw new IllegalArgumentException("Decrease amount must be positive");
+    }
+    if (this.stockQuantity - amount < 0) {
+      throw new IllegalArgumentException("Insufficient stock to decrease by " + amount);
+    }
+    this.stockQuantity -= amount;
+    this.updatedAt = LocalDateTime.now();
+  }
+
+  /**
+   * Sets the product as active or inactive.
+   */
+  public void activate() {
+    this.isActive = true;
+    this.updatedAt = LocalDateTime.now();
+  }
+
+  /**
+   * Sets the product as inactive.
+   */
+  public void inactive() {
+    this.isActive = false;
+    this.updatedAt = LocalDateTime.now();
+  }
+
+  /**
+   * Updates the product price.
+   */
+  public void updatePrice(int newPriceCents) {
+    if (newPriceCents <= 0) {
+      throw new IllegalArgumentException("A product priceCents should be more than zero");
+    }
+    this.priceCents = newPriceCents;
+    this.updatedAt = LocalDateTime.now();
+  }
+
+  /**
+   * Updates product details.
+   */
   public void updateDetails(Optional<String> name, Optional<String> size,
-                            Optional<Integer> priceCents, Optional<Integer> stockQuantity,
-                            Optional<Integer> lowStockAlert, Optional<String> imageUrl,
-                            Optional<Boolean> active) {
+      Optional<Integer> priceCents, Optional<Integer> stockQuantity,
+      Optional<Integer> lowStockAlert, Optional<String> imageUrl,
+      Optional<Boolean> active) {
     name.ifPresent(n -> {
       if (n.trim().isEmpty()) {
         throw new IllegalArgumentException("A product must have a name");
@@ -188,44 +189,45 @@ public class Product {
     this.updatedAt = LocalDateTime.now();
   }
 
-    // Getters
+  // Getters
 
-    public ProductId getId() {
-        return id;
-    }
+  public ProductId getProductId() {
+    return id;
+  }
 
-    public String getName() {
-        return name;
-    }
+  public String getName() {
+    return name;
+  }
 
-    public String getSize() {
-        return size;
-    }
+  public String getSize() {
+    return size;
+  }
 
-    public int getPriceCents() {
-        return priceCents;
-    }
+  public int getPriceCents() {
+    return priceCents;
+  }
 
-    public int getStockQuantity() {
-        return stockQuantity;
-    }
+  public int getStockQuantity() {
+    return stockQuantity;
+  }
 
-    public int getLowStockAlert() {
-        return lowStockAlert;
-    }
+  public int getLowStockAlert() {
+    return lowStockAlert;
+  }
 
-    public String getImageUrl() {
-        return imageUrl;
-    }
+  public String getImageUrl() {
+    return imageUrl;
+  }
 
-    public boolean isActive() {
-        return isActive;
-    }
+  public boolean isActive() {
+    return isActive;
+  }
 
-    public LocalDateTime getCreatedAt() {
-        return createdAt;
-    }
+  public LocalDateTime getCreatedAt() {
+    return createdAt;
+  }
 
-    public LocalDateTime getUpdatedAt() {
-        return updatedAt; }
+  public LocalDateTime getUpdatedAt() {
+    return updatedAt;
+  }
 }

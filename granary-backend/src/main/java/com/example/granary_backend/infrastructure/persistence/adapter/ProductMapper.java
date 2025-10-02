@@ -17,34 +17,31 @@ public class ProductMapper {
     var productId = ProductId.from(entity.getId());
 
     return Product.reconstitute(
-      productId,
-      entity.getName(),
-      entity.getSize(),
-      entity.getPriceCents(),
-      entity.getStockQuantity(),
-      entity.getLowStockAlert(),
-      entity.getImageUrl(),
-      entity.isActive(),
-      entity.getCreatedAt(),
-      entity.getUpdatedAt()
-    );
+        productId,
+        entity.getName(),
+        entity.getSize(),
+        entity.getPriceCents(),
+        entity.getStockQuantity(),
+        entity.getLowStockAlert(),
+        entity.getImageUrl(),
+        entity.isActive(),
+        entity.getCreatedAt(),
+        entity.getUpdatedAt());
   }
 
   public ProductEntity toEntity(Product domain) {
     Objects.requireNonNull(domain, "Product must not be null");
 
     return new ProductEntity(
-      domain.getId().getValue(),
-      domain.getName(),
-      domain.getSize(),
-      domain.getPriceCents(),
-      domain.getStockQuantity(),
-      domain.getImageUrl(),
-      domain.getLowStockAlert(),
-      domain.isActive(),
-      domain.getCreatedAt(),
-      domain.getUpdatedAt()
-    );
+        domain.getProductId().getValue(),
+        domain.getName(),
+        domain.getSize(),
+        domain.getPriceCents(),
+        domain.getStockQuantity(),
+        domain.getImageUrl(),
+        domain.getLowStockAlert(),
+        domain.isActive(),
+        domain.getCreatedAt(),
+        domain.getUpdatedAt());
   }
 }
-

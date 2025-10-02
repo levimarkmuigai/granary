@@ -19,21 +19,17 @@ import com.example.granary_backend.domain.port.ProductRepository;
 import jakarta.persistence.EntityNotFoundException;
 
 @Service
-@Transactional(
-  isolation = Isolation.READ_COMMITTED,
-  rollbackFor = Exception.class
-)
-public class ProductService extends BaseApplicationService{
+@Transactional(isolation = Isolation.READ_COMMITTED, rollbackFor = Exception.class)
+public class ProductService extends BaseApplicationService {
 
   private final ProductRepository productRepository;
   private final CommandValidator<CreateProductCommand> createValidator;
   private final CommandValidator<UpdateProductCommand> updateValidator;
 
   public ProductService(
-    ProductRepository productRepository,
-    CommandValidator<CreateProductCommand> createValidator,
-    CommandValidator<UpdateProductCommand> updateValidator
-  ) {
+      ProductRepository productRepository,
+      CommandValidator<CreateProductCommand> createValidator,
+      CommandValidator<UpdateProductCommand> updateValidator) {
 
     super();
 
@@ -49,18 +45,17 @@ public class ProductService extends BaseApplicationService{
     var productId = ProductId.createNew();
 
     var product = Product.create(
-      productId,
-      command.getName(),
-      command.getSize(),
-      command.getPriceCents(),
-      command.getStockQuantity(),
-      command.getLowStockAlert(),
-      command.getImageUrl()
-    );
+        productId,
+        command.getName(),
+        command.getSize(),
+        command.getPriceCents(),
+        command.getStockQuantity(),
+        command.getLowStockAlert(),
+        command.getImageUrl());
 
     productRepository.save(product);
 
-    return product.getId();
+    return product.getProductId();
   }
 
   public ProductId updateProduct(UpdateProductCommand command) {
@@ -70,37 +65,33 @@ public class ProductService extends BaseApplicationService{
     ProductId productIdToUpdate = safelyParseProductId(command.getProductId());
 
     Product product = productRepository
-    .findById(productIdToUpdate)
-    .orElseThrow(() ->
-      new EntityNotFoundException("Product with ID " + productIdToUpdate + "not found"));
+        .findById(productIdToUpdate)
+        .orElseThrow(() -> new EntityNotFoundException("Product with ID " + productIdToUpdate + "not found"));
 
     product.updateDetails(
-      command.getName(),
-      command.getSize(),
-      command.getPriceCents(),
-      command.getStockQuantity(),
-      command.getLowStockAlert(),
-      command.getImageUrl(),
-      command.getActiveOptional()
-    );
+        command.getName(),
+        command.getSize(),
+        command.getPriceCents(),
+        command.getStockQuantity(),
+        command.getLowStockAlert(),
+        command.getImageUrl(),
+        command.getActiveOptional());
 
     productRepository.save(product);
-    return product.getId();
+    return product.getProductId();
   }
 
   private ProductId safelyParseProductId(String rawId) {
 
     try {
-    return ProductId.fromString(rawId);
+      return ProductId.fromString(rawId);
     } catch (IllegalArgumentException e) {
       Map<String, String> errors = Map.of(
-        "productId", "The provided product ID format is invalid (must be a valid UUID)"
-      );
+          "productId", "The provided product ID format is invalid (must be a valid UUID)");
 
       throw new InvalidCommandException(
-        "The command contains an invalid ID format.",
-        errors
-      );
+          "The command contains an invalid ID format.",
+          errors);
     }
   }
 }

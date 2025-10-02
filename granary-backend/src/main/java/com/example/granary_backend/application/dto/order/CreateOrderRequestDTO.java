@@ -2,12 +2,11 @@ package com.example.granary_backend.application.dto.order;
 
 import java.util.List;
 
-public record CreateOrderRequestDTO (
+import com.example.granary_backend.domain.model.Order.DeliveryMethod;
 
-  List<OrderLineRequestDTO> orderLines,
-  String customerName,
-  String customerEmail,
-  String customerPhone,
-  String customerAddress,
-  String deliveryMethod
-) {}
+public record CreateOrderRequestDTO(
+
+    List<OrderLineRequestDTO> orderLines,
+    CustomerDetailsRequestDTO customerDetails,
+    DeliveryMethod deliveryMethod) {
+}

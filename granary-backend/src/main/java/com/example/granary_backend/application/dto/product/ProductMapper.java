@@ -5,7 +5,6 @@ import java.util.Optional;
 
 import com.example.granary_backend.application.command.product.CreateProductCommand;
 import com.example.granary_backend.application.command.product.UpdateProductCommand;
-import com.example.granary_backend.application.dto.product.CreateProductRequestDTO;
 import com.example.granary_backend.domain.model.Product;
 
 public class ProductMapper {
@@ -21,16 +20,15 @@ public class ProductMapper {
     var stockQuantity = dto.stockQuantity();
 
     return new CreateProductCommand(
-      name,
-      size,
-      priceCents,
-      stockQuantity,
-      lowStockAlert,
-      imageUrl
-    );
+        name,
+        size,
+        priceCents,
+        stockQuantity,
+        lowStockAlert,
+        imageUrl);
   }
 
-  public UpdateProductCommand toUpdateCommand(UpdateProductRequestDTO dto){
+  public UpdateProductCommand toUpdateCommand(UpdateProductRequestDTO dto) {
     Objects.requireNonNull(dto, "UpdateProductRequestDTO must not be null");
 
     var productId = dto.productId();
@@ -44,33 +42,32 @@ public class ProductMapper {
     Optional<String> imageUrl = Optional.ofNullable(dto.imageUrl());
 
     return new UpdateProductCommand(
-      productId,
-      name,
-      size,
-      lowStockAlert,
-      imageUrl,
-      priceCents,
-      stockQuantity,
-      active);
+        productId,
+        name,
+        size,
+        lowStockAlert,
+        imageUrl,
+        priceCents,
+        stockQuantity,
+        active);
   }
 
-  public ProductResponseDTO toResponseDTO(Product product){
+  public ProductResponseDTO toResponseDTO(Product product) {
     Objects.requireNonNull(product, "Product must not be null");
 
-    var id = product.getId().toString();
+    var id = product.getProductId().toString();
 
     return new ProductResponseDTO(
-      id,
-      product.getName(),
-      product.getSize(),
-      product.getPriceCents(),
-      product.getStockQuantity(),
-      product.getLowStockAlert(),
-      product.getImageUrl(),
-      product.isActive(),
-      product.getCreatedAt(),
-      product.getUpdatedAt()
-    );
+        id,
+        product.getName(),
+        product.getSize(),
+        product.getPriceCents(),
+        product.getStockQuantity(),
+        product.getLowStockAlert(),
+        product.getImageUrl(),
+        product.isActive(),
+        product.getCreatedAt(),
+        product.getUpdatedAt());
 
   }
 }

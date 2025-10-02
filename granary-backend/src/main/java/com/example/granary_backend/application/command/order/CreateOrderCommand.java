@@ -11,12 +11,10 @@ public final class CreateOrderCommand {
   private final CustomerDetailsCommand customerDetails;
   private final DeliveryMethod deliveryMethod;
 
-
   public CreateOrderCommand(
-    List<OrderLineCommand> orderLines,
-    CustomerDetailsCommand customerDetails,
-    DeliveryMethod deliveryMethod
-  ) {
+      List<OrderLineCommand> orderLines,
+      CustomerDetailsCommand customerDetails,
+      DeliveryMethod deliveryMethod) {
 
     Objects.requireNonNull(orderLines, "orderLines cannot be null");
     Objects.requireNonNull(customerDetails, "customerDetailsCommand cannot be null");
@@ -35,6 +33,7 @@ public final class CreateOrderCommand {
   public CustomerDetailsCommand getCustomerDetails() {
     return customerDetails;
   }
+
   public DeliveryMethod getDeliveryMethod() {
     return deliveryMethod;
   }
@@ -42,10 +41,10 @@ public final class CreateOrderCommand {
   @Override
   public String toString() {
     return "CreateOrderCommand{" +
-    "orderLines='" + orderLines + '\'' +
-    ", customerDetails='" + customerDetails + '\'' +
-    ", deliveryMethod='" + deliveryMethod + '\'' +
-    '}';
+        "orderLines='" + orderLines + '\'' +
+        ", customerDetails='" + customerDetails + '\'' +
+        ", deliveryMethod='" + deliveryMethod + '\'' +
+        '}';
   }
 
   public static final class OrderLineCommand {
@@ -59,8 +58,13 @@ public final class CreateOrderCommand {
 
     }
 
-    public String getProductId() { return productId; }
-    public int getQuantity() { return quantity; }
+    public String getProductId() {
+      return productId;
+    }
+
+    public int getQuantity() {
+      return quantity;
+    }
 
   }
 
@@ -71,11 +75,10 @@ public final class CreateOrderCommand {
     private final String address;
 
     public CustomerDetailsCommand(
-      String name,
-      String email,
-      String phone,
-      String address
-    ) {
+        String name,
+        String email,
+        String phone,
+        String address) {
 
       this.name = Objects.requireNonNull(name, "Customer name cannot be null");
       this.email = Objects.requireNonNull(email, "Customer email cannot be null");
@@ -83,10 +86,21 @@ public final class CreateOrderCommand {
       this.address = Objects.requireNonNull(address, "Customer address cannot be null");
     }
 
-    public String getName() { return name; }
-    public String getEmail() { return email; }
-    public String getPhone() { return phone; }
-    public String getAddress() { return address; }
+    public String getName() {
+      return name;
+    }
+
+    public String getEmail() {
+      return email;
+    }
+
+    public String getPhone() {
+      return phone;
+    }
+
+    public String getAddress() {
+      return address;
+    }
 
     @Override
     public String toString() {

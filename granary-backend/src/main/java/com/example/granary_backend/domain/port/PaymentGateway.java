@@ -6,7 +6,7 @@ import com.example.granary_backend.domain.model.value.PaymentResult;
 
 public interface PaymentGateway {
 
-  PaymentResult requestPayment(OrderId orderId, int amountShillings, String phoneNumber);
+  String intiateStkPush(OrderId orderId, int amountShillings, String phoneNumber);
 
-  PaymentResult confirmPayment(MpesaTransactionId transactionId);
+  PaymentResult confirmTransaction(MpesaTransactionId transactionId);
 }

@@ -2,24 +2,24 @@ package com.example.granary_backend.infrastructure.persistence.adapter;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 import org.springframework.stereotype.Component;
 
 import com.example.granary_backend.domain.model.Product;
 import com.example.granary_backend.domain.model.value.ProductId;
 import com.example.granary_backend.domain.port.ProductRepository;
-import com.example.granary_backend.infrastructure.persistence.adapter.ProductMapper;
 import com.example.granary_backend.infrastructure.persistence.entity.ProductEntity;
 import com.example.granary_backend.infrastructure.persistence.repository.ProductJpaRepository;
 
 @Component
-public class ProductRepositoryAdapter implements ProductRepository{
+public class ProductRepositoryAdapter implements ProductRepository {
 
   private final ProductJpaRepository jpaRepository;
   private final ProductMapper mapper;
 
   public ProductRepositoryAdapter(ProductJpaRepository jpaRepository,
-    ProductMapper mapper) {
+      ProductMapper mapper) {
 
     this.jpaRepository = jpaRepository;
     this.mapper = mapper;
@@ -28,16 +28,16 @@ public class ProductRepositoryAdapter implements ProductRepository{
   @Override
   public Optional<Product> findById(ProductId id) {
     return jpaRepository.findById(id.getValue())
-    .map(mapper::toDomain);
+        .map(mapper::toDomain);
   }
 
   @Override
   public List<Product> findAll() {
     return jpaRepository
-    .findAll()
-    .stream()
-    .map(mapper::toDomain)
-    .toList();
+        .findAll()
+        .stream()
+        .map(mapper::toDomain)
+        .toList();
   }
 
   @Override
@@ -51,34 +51,47 @@ public class ProductRepositoryAdapter implements ProductRepository{
     jpaRepository.deleteById(id.getValue());
   }
 
+  public List<Product> findAllById(Set<ProductId> ids) {
+    var rawIds = ids
+        .stream()
+        .map(ProductId::getValue)
+        .toList();
+
+    return jpaRepository
+        .findAllById(rawIds)
+        .stream()
+        .map(mapper::toDomain)
+        .toList();
+  }
+
   public List<Product> findActiveProducts() {
     return jpaRepository
-    .findAll()
-    .stream()
-    .filter(ProductEntity::isActive)
-    .map(mapper::toDomain)
-    .toList();
+        .findAll()
+        .stream()
+        .filter(ProductEntity::isActive)
+        .map(mapper::toDomain)
+        .toList();
   }
 
   public List<Product> findLowStockProducts(int threshold) {
     return jpaRepository
-    .findAll()
-    .stream()
-    .filter(entity -> entity.getStockQuantity() < threshold)
-    .map(mapper::toDomain)
-    .toList();
+        .findAll()
+        .stream()
+        .filter(entity -> entity.getStockQuantity() < threshold)
+        .map(mapper::toDomain)
+        .toList();
   }
 
   public List<Product> searchByName(String name) {
     String searchTerm = name.toLowerCase();
     return jpaRepository
-    .findAll()
-    .stream()
-    .filter(entity -> {
-      String productName = entity.getName();
-      return productName != null && productName.toLowerCase().contains(searchTerm);
-    })
-    .map(mapper::toDomain)
-    .toList();
+        .findAll()
+        .stream()
+        .filter(entity -> {
+          String productName = entity.getName();
+          return productName != null && productName.toLowerCase().contains(searchTerm);
+        })
+        .map(mapper::toDomain)
+        .toList();
   }
 }
