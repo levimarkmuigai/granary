@@ -54,7 +54,7 @@ public final class Order {
         orderLines,
         customerDetails,
         deliveryMethod,
-        PaymentStatus.PENDING,
+        PaymentStatus.AWAITTING_INITIATION,
         OrderStatus.NEW,
         now,
         now);
@@ -88,8 +88,15 @@ public final class Order {
     }
     this.mpesaTransactionId = mpesaTransactionId;
 
-    if (this.paymentStatus != PaymentStatus.PENDING) {
-      throw new IllegalStateException("Order cannot be marked as paid if it is not pending");
+    if (this.paymentStatus != PaymentStatus.PENDING &&
+        this.paymentStatus != PaymentStatus.AWAITTING_INITIATION) {
+
+      throw new IllegalStateException(
+          "Order cannot be marked as paid from status: " + this.paymentStatus);
+    }
+
+    if (this.paymentStatus == PaymentStatus.SUCCESS) {
+      return;
     }
 
     this.mpesaTransactionId = mpesaTransactionId;
@@ -98,9 +105,17 @@ public final class Order {
   }
 
   public void failedPayment() {
-    if (this.paymentStatus != PaymentStatus.PENDING) {
-      throw new IllegalStateException("Order cannot be marked as failed if it is not pending");
+    if (this.paymentStatus != PaymentStatus.PENDING &&
+        this.paymentStatus != PaymentStatus.AWAITTING_INITIATION) {
+
+      throw new IllegalStateException(
+          "Payment cannot be marked as failed from status: " + this.paymentStatus);
     }
+
+    if (paymentStatus == PaymentStatus.SUCCESS) {
+      return;
+    }
+
     this.paymentStatus = PaymentStatus.FAILED;
     this.updatedAt = LocalDateTime.now();
   }
@@ -300,6 +315,7 @@ public final class Order {
   }
 
   public enum PaymentStatus {
+    AWAITTING_INITIATION,
     PENDING,
     SUCCESS,
     FAILED,

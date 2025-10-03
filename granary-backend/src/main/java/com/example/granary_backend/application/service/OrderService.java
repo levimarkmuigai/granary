@@ -29,89 +29,92 @@ import jakarta.persistence.EntityNotFoundException;
 @Transactional(isolation = Isolation.READ_COMMITTED, rollbackFor = Exception.class)
 public class OrderService extends BaseApplicationService {
 
-    private final OrderRepository orderRepository;
-    private final ProductRepository productRepository;
+        private final OrderRepository orderRepository;
+        private final ProductRepository productRepository;
 
-    private final CommandValidator<CreateOrderCommand> createOrderValidator;
-    private final CommandValidator<AdvanceOrderCommand> advanceOrderValidator;
+        private final CommandValidator<CreateOrderCommand> createOrderValidator;
+        private final CommandValidator<AdvanceOrderCommand> advanceOrderValidator;
 
-    public OrderService(
-            OrderRepository orderRepository,
-            ProductRepository productRepository,
-            CommandValidator<CreateOrderCommand> createOrderValidator,
-            CommandValidator<AdvanceOrderCommand> advanceOrderValidator) {
+        public OrderService(
+                        OrderRepository orderRepository,
+                        ProductRepository productRepository,
+                        CommandValidator<CreateOrderCommand> createOrderValidator,
+                        CommandValidator<AdvanceOrderCommand> advanceOrderValidator) {
 
-        super();
+                super();
 
-        this.orderRepository = Objects.requireNonNull(orderRepository, "OrderRepository cannot be null");
-        this.productRepository = Objects.requireNonNull(productRepository, "ProductRepository cannot be null");
-        this.createOrderValidator = Objects.requireNonNull(createOrderValidator, "CreateOrderValidator cannot be null");
-        this.advanceOrderValidator = Objects.requireNonNull(advanceOrderValidator,
-                "AdvanceOrderValidator cannot be null");
-    }
+                this.orderRepository = Objects.requireNonNull(orderRepository, "OrderRepository cannot be null");
+                this.productRepository = Objects.requireNonNull(productRepository, "ProductRepository cannot be null");
+                this.createOrderValidator = Objects.requireNonNull(createOrderValidator,
+                                "CreateOrderValidator cannot be null");
+                this.advanceOrderValidator = Objects.requireNonNull(advanceOrderValidator,
+                                "AdvanceOrderValidator cannot be null");
+        }
 
-    public OrderId createOrder(CreateOrderCommand command) {
+        public OrderId createOrder(CreateOrderCommand command) {
 
-        createOrderValidator.validate(command);
+                createOrderValidator.validate(command);
 
-        Set<String> rawProductIds = CommandUtils.extractUniqueIds(
-                command.getOrderLines(),
-                CreateOrderCommand.OrderLineCommand::getProductId);
+                Set<String> rawProductIds = CommandUtils.extractUniqueIds(
+                                command.getOrderLines(),
+                                CreateOrderCommand.OrderLineCommand::getProductId);
 
-        List<ProductId> productIds = rawProductIds
-                .stream()
-                .map(ProductId::fromString)
-                .toList();
+                List<ProductId> productIds = rawProductIds
+                                .stream()
+                                .map(ProductId::fromString)
+                                .toList();
 
-        Map<ProductId, Product> productMap = BatchFetcher.<ProductId, Product>fetch(
-                productIds,
-                productRepository::findAllById,
-                Product::getProductId);
+                Map<ProductId, Product> productMap = BatchFetcher.<ProductId, Product>fetch(
+                                productIds,
+                                productRepository::findAllById,
+                                Product::getProductId);
 
-        List<Order.OrderLine> orderLines = command.getOrderLines().stream().map(lineCmd -> {
-            ProductId productId = ProductId.fromString(lineCmd.getProductId());
-            Product product = productMap.get(productId);
+                List<Order.OrderLine> orderLines = command.getOrderLines().stream().map(lineCmd -> {
+                        ProductId productId = ProductId.fromString(lineCmd.getProductId());
+                        Product product = productMap.get(productId);
 
-            if (product == null) {
-                throw new EntityNotFoundException("Product with ID " + productId + " not found.");
-            }
+                        if (product == null) {
+                                throw new EntityNotFoundException("Product with ID " + productId + " not found.");
+                        }
 
-            if (product.getStockQuantity() < lineCmd.getQuantity()) {
-                throw new IllegalStateException("Insufficient stock for product: " + product.getName());
-            }
+                        if (product.getStockQuantity() < lineCmd.getQuantity()) {
+                                throw new IllegalStateException("Insufficient stock for product: " + product.getName());
+                        }
 
-            return Order.OrderLine.create(
-                    product.getProductId(), product.getName(), product.getPriceCents(), lineCmd.getQuantity());
-        }).toList();
+                        return Order.OrderLine.create(
+                                        product.getProductId(), product.getName(), product.getPriceCents(),
+                                        lineCmd.getQuantity());
+                }).toList();
 
-        Order.CustomerDetails customerDetails = DomainMapper.mapCustomerDetails(
-                command.getCustomerDetails());
+                Order.CustomerDetails customerDetails = DomainMapper.mapCustomerDetails(
+                                command.getCustomerDetails());
 
-        Order order = Order.createFromOrderLines(
-                OrderId.createNew(),
-                orderLines,
-                customerDetails,
-                command.getDeliveryMethod());
+                Order order = Order.createFromOrderLines(
+                                OrderId.createNew(),
+                                orderLines,
+                                customerDetails,
+                                command.getDeliveryMethod());
 
-        orderRepository.save(order);
+                orderRepository.save(order);
 
-        return order.getId();
+                return order.getId();
 
-    }
+        }
 
-    public OrderId advanceOrderStatus(AdvanceOrderCommand command) {
-        advanceOrderValidator.validate(command);
+        public OrderId advanceOrderStatus(AdvanceOrderCommand command) {
+                advanceOrderValidator.validate(command);
 
-        var orderId = OrderId.fromString(command.getOrderId());
+                var orderId = OrderId.fromString(command.getOrderId());
 
-        Order order = orderRepository.findById(orderId)
-                .orElseThrow(() -> new EntityNotFoundException("Order with id: " + orderId + "not found."));
+                Order order = orderRepository.findById(orderId)
+                                .orElseThrow(() -> new EntityNotFoundException(
+                                                "Order with id: " + orderId + "not found."));
 
-        order.advanceStatus();
+                order.advanceStatus();
 
-        orderRepository.save(order);
+                orderRepository.save(order);
 
-        return order.getId();
-    }
+                return order.getId();
+        }
 
 }
