@@ -58,4 +58,27 @@ public class CheckoutService extends BaseApplicationService {
         return checkOutRequestId;
     }
 
+    public void handlePaymentFaliure(String orderIdString) {
+        OrderId orderId = OrderId.fromString(orderIdString);
+        Order order = orderRepository.findById(orderId)
+                .orElseThrow(() -> new EntityNotFoundException("Order not found with ID: " + orderId));
+
+        order.failedPayment();
+
+        // TODO: Post Failure orchestration (notify customer)
+
+        orderRepository.save(order);
+    }
+
+    public void handlePaymentCancellation(String orderIdString) {
+        OrderId orderId = OrderId.fromString(orderIdString);
+
+        Order order = orderRepository.findById(orderId)
+                .orElseThrow(() -> new EntityNotFoundException("Order not found with ID: " + orderId));
+
+        order.cancelPayment();
+
+        orderRepository.save(order);
+    }
+
 }

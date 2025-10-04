@@ -120,6 +120,28 @@ public final class Order {
     this.updatedAt = LocalDateTime.now();
   }
 
+  public void cancelPayment() {
+    if (this.paymentStatus == PaymentStatus.SUCCESS) {
+      throw new IllegalStateException("Cannot cancel payment; it has already been processed successfully.");
+    }
+
+    if (this.paymentStatus != PaymentStatus.AWAITTING_INITIATION &&
+        this.paymentStatus != PaymentStatus.PENDING &&
+        this.paymentStatus != PaymentStatus.FAILED) {
+
+      if (this.paymentStatus == PaymentStatus.CANCELLED) {
+        return;
+      }
+
+      throw new IllegalStateException(
+          "Payment cannot be cancelled from current status: " + this.paymentStatus);
+    }
+
+    this.paymentStatus = PaymentStatus.CANCELLED;
+    this.updatedAt = LocalDateTime.now();
+
+  }
+
   public void advanceStatus() {
     if (this.orderStatus == OrderStatus.DELIVERED) {
       throw new IllegalStateException("Order is already delivered and cannot be advanced further");
