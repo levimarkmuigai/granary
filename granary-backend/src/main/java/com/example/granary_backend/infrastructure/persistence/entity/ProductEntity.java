@@ -18,8 +18,7 @@ import jakarta.validation.constraints.Size;
 public class ProductEntity {
 
   @Id
-  private UUID
-  id;
+  private UUID id;
 
   @Column(name = "name", nullable = false, length = 100)
   private String name;
@@ -54,14 +53,15 @@ public class ProductEntity {
   @Column(name = "updated_at")
   private LocalDateTime updatedAt;
 
-  protected ProductEntity() {}
+  protected ProductEntity() {
+  }
 
   public ProductEntity(UUID id) {
-    this.id =  id;
+    this.id = id;
   }
 
   public ProductEntity(UUID id, String name, String size, int priceCents, int stockQuantity, String imageUrl,
-    int lowStockAlert, boolean isActive, LocalDateTime createdAt, LocalDateTime updatedAt) {
+      int lowStockAlert, boolean isActive, LocalDateTime createdAt, LocalDateTime updatedAt) {
     this.id = id;
     this.name = name;
     this.size = size;
@@ -74,14 +74,44 @@ public class ProductEntity {
     this.updatedAt = updatedAt;
   }
 
-  public UUID getId() { return this.id; }
-  public String getName() { return this.name; }
-  public String getSize() { return this.size; }
-  public int getPriceCents() { return this.priceCents; }
-  public int getStockQuantity() { return this.stockQuantity; }
-  public int getLowStockAlert() { return this.lowStockAlert; }
-  public String getImageUrl() { return this.imageUrl; }
-  public boolean isActive() { return this.isActive; }
-  public LocalDateTime getCreatedAt() { return this.createdAt; }
-  public LocalDateTime getUpdatedAt() { return this.updatedAt; }
+  public UUID getId() {
+    return this.id;
+  }
+
+  public String getName() {
+    return this.name;
+  }
+
+  public String getSize() {
+    return this.size;
+  }
+
+  public int getPriceCents() {
+    return this.priceCents;
+  }
+
+  public int getStockQuantity() {
+    return this.stockQuantity;
+  }
+
+  public int getLowStockAlert() {
+    return this.lowStockAlert;
+  }
+
+  public String getImageUrl() {
+    return this.imageUrl;
+  }
+
+  public boolean isActive() {
+    return this.isActive;
+  }
+
+  public LocalDateTime getCreatedAt() {
+    return this.createdAt;
+  }
+
+  public LocalDateTime getUpdatedAt() {
+    return this.updatedAt;
+  }
+
 }

@@ -64,10 +64,7 @@ public class Product {
     }
     this.createdAt = Objects.requireNonNull(createdAt, "A product must have a createdAt date");
 
-    if (updatedAt.isBefore(createdAt)) {
-      throw new IllegalArgumentException("A product updatedAt cannot be before createdAt");
-    }
-    this.updatedAt = createdAt;
+    this.updatedAt = Objects.requireNonNull(updatedAt, "A product must have a updatedAt date");
   }
 
   /**

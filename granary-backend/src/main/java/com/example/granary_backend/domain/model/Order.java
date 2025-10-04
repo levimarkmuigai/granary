@@ -15,6 +15,7 @@ public final class Order {
   private List<OrderLine> orderLines;
   private CustomerDetails customerDetails;
   private DeliveryMethod deliveryMethod;
+
   private PaymentStatus paymentStatus;
   private OrderStatus orderStatus;
   private MpesaTransactionId mpesaTransactionId;
@@ -30,9 +31,9 @@ public final class Order {
     }
 
     this.id = id;
-    this.orderLines = orderLines;
-    this.customerDetails = customerDetails;
-    this.deliveryMethod = deliveryMethod;
+    this.orderLines = List.copyOf(orderLines);
+    this.customerDetails = Objects.requireNonNull(customerDetails, "Customer details must be null");
+    this.deliveryMethod = Objects.requireNonNull(deliveryMethod, "Delivrty method must be null");
     this.paymentStatus = paymentStatus;
     this.orderStatus = orderStatus;
     this.mpesaCheckoutRequestId = null;
@@ -73,11 +74,12 @@ public final class Order {
       throw new IllegalArgumentException("Checkout Request ID cannot be blank.");
     }
 
-    if (this.paymentStatus != PaymentStatus.PENDING) {
-      throw new IllegalStateException("Payment initiation can only occur when status is PENDING.");
+    if (this.paymentStatus != PaymentStatus.AWAITTING_INITIATION) {
+      throw new IllegalStateException("Payment initiation can only occur when status is AWAITTING_INITIATION.");
     }
 
     this.mpesaCheckoutRequestId = checkoutRequestId;
+    this.paymentStatus = PaymentStatus.PENDING;
     this.updatedAt = LocalDateTime.now();
   }
 
@@ -99,7 +101,6 @@ public final class Order {
       return;
     }
 
-    this.mpesaTransactionId = mpesaTransactionId;
     this.paymentStatus = PaymentStatus.SUCCESS;
     this.updatedAt = LocalDateTime.now();
   }
@@ -161,18 +162,18 @@ public final class Order {
   }
 
   public void updateCustomerDetails(CustomerDetails newDetails) {
-    if (newDetails == null) {
-      throw new IllegalArgumentException("New customer details cannot be null");
+    if (this.orderStatus != OrderStatus.NEW && this.orderStatus != OrderStatus.PACKAGING) {
+      throw new IllegalStateException("Customer details can only be updated for NEW or PACKAGING orders.");
     }
-    this.customerDetails = newDetails;
+    this.customerDetails = Objects.requireNonNull(newDetails, "New customer details cannot be null");
     this.updatedAt = LocalDateTime.now();
   }
 
   public void updateDeliveryMethod(DeliveryMethod newMethod) {
-    if (newMethod == null) {
-      throw new IllegalArgumentException("New delivery method cannot be null");
+    if (this.orderStatus != OrderStatus.NEW && this.orderStatus != OrderStatus.PACKAGING) {
+      throw new IllegalStateException("Delivery method can only be updated for NEW or PACKAGING orders.");
     }
-    this.deliveryMethod = newMethod;
+    this.deliveryMethod = Objects.requireNonNull(newMethod, "New delivery method cannot be null");
     this.updatedAt = LocalDateTime.now();
   }
 
