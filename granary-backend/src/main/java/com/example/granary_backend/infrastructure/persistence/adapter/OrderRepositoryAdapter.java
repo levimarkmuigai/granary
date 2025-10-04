@@ -17,14 +17,14 @@ import com.example.granary_backend.infrastructure.persistence.repository.OrderJp
 import jakarta.persistence.EntityManager;
 
 @Component
-public class OrderRepositoryAdapter implements OrderRepository{
+public class OrderRepositoryAdapter implements OrderRepository {
 
   private final OrderJpaRepository jpaRepository;
   private final OrderMapper mapper;
   private final EntityManager em;
 
   public OrderRepositoryAdapter(OrderJpaRepository jpaRepository,
-    OrderMapper mapper, EntityManager em) {
+      OrderMapper mapper, EntityManager em) {
 
     this.jpaRepository = jpaRepository;
     this.mapper = mapper;
@@ -36,7 +36,7 @@ public class OrderRepositoryAdapter implements OrderRepository{
     Objects.requireNonNull(id, "OrderId must not be null");
 
     return jpaRepository.findById(id.getValue())
-      .map(mapper::toDomain);
+        .map(mapper::toDomain);
   }
 
   @Override
@@ -44,9 +44,9 @@ public class OrderRepositoryAdapter implements OrderRepository{
     List<OrderEntity> entities = jpaRepository.findAll();
 
     return entities
-    .stream()
-    .map(mapper::toDomain)
-    .toList();
+        .stream()
+        .map(mapper::toDomain)
+        .toList();
 
   }
 
@@ -55,10 +55,10 @@ public class OrderRepositoryAdapter implements OrderRepository{
     Objects.requireNonNull(status, "Order status must not be null");
 
     return jpaRepository
-      .findByOrderStatus(status)
-      .stream()
-      .map(mapper::toDomain)
-      .toList();
+        .findByOrderStatus(status)
+        .stream()
+        .map(mapper::toDomain)
+        .toList();
   }
 
   @Override
@@ -71,10 +71,10 @@ public class OrderRepositoryAdapter implements OrderRepository{
     }
 
     return jpaRepository
-      .findByCreatedAtBetween(startDate, endDate)
-      .stream()
-      .map(mapper::toDomain)
-      .toList();
+        .findByCreatedAtBetween(startDate, endDate)
+        .stream()
+        .map(mapper::toDomain)
+        .toList();
   }
 
   @Override
@@ -82,9 +82,9 @@ public class OrderRepositoryAdapter implements OrderRepository{
     Objects.requireNonNull(order, "Order must not be null");
 
     List<ProductEntity> productEntities = order.getOrderLines()
-      .stream()
-      .map(orderLine -> em.getReference(ProductEntity.class, orderLine.getProductId().getValue()))
-      .toList();
+        .stream()
+        .map(orderLine -> em.getReference(ProductEntity.class, orderLine.getProductId().getValue()))
+        .toList();
 
     OrderEntity entity = mapper.toEntity(order, productEntities);
 

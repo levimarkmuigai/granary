@@ -10,8 +10,6 @@ import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
-import jakarta.validation.constraints.Min;
-import jakarta.validation.constraints.Size;
 
 @Entity
 @Table(name = "products")
@@ -27,19 +25,15 @@ public class ProductEntity {
   private String size;
 
   @Column(name = "price_cents", nullable = false)
-  @Min(1)
   private int priceCents;
 
   @Column(name = "stock_quantity", nullable = false)
-  @Min(0)
   private int stockQuantity;
 
   @Column(name = "low_stock_alert", nullable = false)
-  @Min(0)
   private int lowStockAlert;
 
   @Column(name = "image_url")
-  @Size(max = 500)
   private String imageUrl;
 
   @Column(name = "is_active", nullable = false)
@@ -78,28 +72,56 @@ public class ProductEntity {
     return this.id;
   }
 
+  public void setName(String name) {
+    this.name = name;
+  }
+
   public String getName() {
     return this.name;
+  }
+
+  public void setSize(String size) {
+    this.size = size;
   }
 
   public String getSize() {
     return this.size;
   }
 
+  public void setPriceCents(int priceCents) {
+    this.priceCents = priceCents;
+  }
+
   public int getPriceCents() {
     return this.priceCents;
+  }
+
+  public void setStockQuantity(int stockQuantity) {
+    this.stockQuantity = stockQuantity;
   }
 
   public int getStockQuantity() {
     return this.stockQuantity;
   }
 
+  public void setLowStockAlert(int lowStockAlert) {
+    this.lowStockAlert = lowStockAlert;
+  }
+
   public int getLowStockAlert() {
     return this.lowStockAlert;
   }
 
+  public void setImageUrl(String imageUrl) {
+    this.imageUrl = imageUrl;
+  }
+
   public String getImageUrl() {
     return this.imageUrl;
+  }
+
+  public void setActive(boolean isActive) {
+    this.isActive = isActive;
   }
 
   public boolean isActive() {

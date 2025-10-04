@@ -9,7 +9,6 @@ import org.springframework.stereotype.Component;
 import com.example.granary_backend.domain.model.Product;
 import com.example.granary_backend.domain.model.value.ProductId;
 import com.example.granary_backend.domain.port.ProductRepository;
-import com.example.granary_backend.infrastructure.persistence.entity.ProductEntity;
 import com.example.granary_backend.infrastructure.persistence.repository.ProductJpaRepository;
 
 @Component
@@ -64,33 +63,30 @@ public class ProductRepositoryAdapter implements ProductRepository {
         .toList();
   }
 
+  @Override
   public List<Product> findActiveProducts() {
     return jpaRepository
-        .findAll()
+        .findByIsActiveTrue()
         .stream()
-        .filter(ProductEntity::isActive)
         .map(mapper::toDomain)
         .toList();
   }
 
+  @Override
   public List<Product> findLowStockProducts(int threshold) {
     return jpaRepository
-        .findAll()
+        .findByStockQuantityLessThan(threshold)
         .stream()
-        .filter(entity -> entity.getStockQuantity() < threshold)
         .map(mapper::toDomain)
         .toList();
   }
 
+  @Override
   public List<Product> searchByName(String name) {
-    String searchTerm = name.toLowerCase();
+
     return jpaRepository
-        .findAll()
+        .findByNameContainingIgnoreCase(name)
         .stream()
-        .filter(entity -> {
-          String productName = entity.getName();
-          return productName != null && productName.toLowerCase().contains(searchTerm);
-        })
         .map(mapper::toDomain)
         .toList();
   }

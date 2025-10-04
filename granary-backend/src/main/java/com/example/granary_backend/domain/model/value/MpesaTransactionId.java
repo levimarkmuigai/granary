@@ -7,4 +7,8 @@ public record MpesaTransactionId(String value) {
       throw new IllegalArgumentException("MpesaTransactionId cannot be null or blank");
     }
   }
+
+  public static MpesaTransactionId from(String rawId) {
+    return new MpesaTransactionId(rawId);
+  }
 }

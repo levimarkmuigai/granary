@@ -31,6 +31,9 @@ public class OrderEntity {
   @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, orphanRemoval = true)
   private List<OrderLineEntity> orderLines = new ArrayList<>();
 
+  @Column(name = "mpesa_checkout_request_id")
+  private String mpesaCheckoutRequestId;
+
   @Column(name = "mpesa_transaction_id")
   private String mpesaTransactionId;
 
@@ -66,16 +69,17 @@ public class OrderEntity {
   @Column(name = "customer_email", nullable = false)
   private String customerEmail;
 
-  protected OrderEntity () {}
+  public OrderEntity() {
+  }
 
-  public OrderEntity(UUID id,List<OrderLineEntity> orderLines,
-    String mpesaTransactionId,LocalDateTime createdAt, LocalDateTime updatedAt,
-    DeliveryMethod deliveryMethod,PaymentStatus paymentStatus, OrderStatus orderStatus,
-    String customerName, String customerPhone, String customerAddress, String customerEmail) {
+  public OrderEntity(UUID id, List<OrderLineEntity> orderLines,
+      String mpesaTransactionId, LocalDateTime createdAt, LocalDateTime updatedAt,
+      DeliveryMethod deliveryMethod, PaymentStatus paymentStatus, OrderStatus orderStatus,
+      String customerName, String customerPhone, String customerAddress, String customerEmail) {
 
     this.id = id;
     this.orderLines = orderLines;
-    for(OrderLineEntity line : orderLines){
+    for (OrderLineEntity line : orderLines) {
       line.assignToOrder(this);
     }
 
@@ -91,17 +95,102 @@ public class OrderEntity {
     this.customerEmail = customerEmail;
   }
 
-  public UUID getId() { return this.id; }
-  public List<OrderLineEntity> getOrderLines() { return this.orderLines; }
-  public String getMpesaTransactionId() { return this.mpesaTransactionId; }
-  public LocalDateTime getCreatedAt() { return this.createdAt; }
-  public LocalDateTime getUpdatedAt() { return this.updatedAt; }
-  public DeliveryMethod getDeliveryMethod() { return this.deliveryMethod; }
-  public PaymentStatus getPaymentStatus() { return this.paymentStatus; }
-  public OrderStatus getOrderStatus() { return this.orderStatus; }
-  public String getCustomerName() { return this.customerName; }
-  public String getCustomerEmail() { return this.customerEmail; }
-  public String getCustomerPhone() { return this.customerPhone; }
-  public String getCustomerAddress() { return this.customerAddress; }
-}
+  public UUID getId() {
+    return this.id;
+  }
 
+  public List<OrderLineEntity> getOrderLines() {
+    return this.orderLines;
+  }
+
+  public String getMpesaCheckoutRequestId() {
+    return this.mpesaCheckoutRequestId;
+  }
+
+  public String getMpesaTransactionId() {
+    return this.mpesaTransactionId;
+  }
+
+  public LocalDateTime getCreatedAt() {
+    return this.createdAt;
+  }
+
+  public LocalDateTime getUpdatedAt() {
+    return this.updatedAt;
+  }
+
+  public DeliveryMethod getDeliveryMethod() {
+    return this.deliveryMethod;
+  }
+
+  public PaymentStatus getPaymentStatus() {
+    return this.paymentStatus;
+  }
+
+  public OrderStatus getOrderStatus() {
+    return this.orderStatus;
+  }
+
+  public String getCustomerName() {
+    return this.customerName;
+  }
+
+  public String getCustomerEmail() {
+    return this.customerEmail;
+  }
+
+  public String getCustomerPhone() {
+    return this.customerPhone;
+  }
+
+  public String getCustomerAddress() {
+    return this.customerAddress;
+  }
+
+  public void setId(UUID id) {
+    this.id = id;
+  }
+
+  public void setMpesaCheckoutRequestId(String mpesaCheckoutRequestId) {
+    this.mpesaCheckoutRequestId = mpesaCheckoutRequestId;
+  }
+
+  public void setMpesaTransactionId(String mpesaTransactionId) {
+    this.mpesaTransactionId = mpesaTransactionId;
+  }
+
+  public void setDeliveryMethod(DeliveryMethod deliveryMethod) {
+    this.deliveryMethod = deliveryMethod;
+  }
+
+  public void setPaymentStatus(PaymentStatus paymentStatus) {
+    this.paymentStatus = paymentStatus;
+  }
+
+  public void setOrderStatus(OrderStatus orderStatus) {
+    this.orderStatus = orderStatus;
+  }
+
+  public void setCustomerName(String customerName) {
+    this.customerName = customerName;
+  }
+
+  public void setCustomerPhone(String customerPhone) {
+    this.customerPhone = customerPhone;
+  }
+
+  public void setCustomerAddress(String customerAddress) {
+    this.customerAddress = customerAddress;
+  }
+
+  public void setCustomerEmail(String customerEmail) {
+    this.customerEmail = customerEmail;
+  }
+
+  public void addOrderLine(OrderLineEntity line) {
+
+    this.orderLines.add(line);
+    line.setOrder(this);
+
+  }
+}

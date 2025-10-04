@@ -20,11 +20,12 @@ public final class Order {
   private OrderStatus orderStatus;
   private MpesaTransactionId mpesaTransactionId;
   private String mpesaCheckoutRequestId;
-  private LocalDateTime createdAt;
+  private final LocalDateTime createdAt;
   private LocalDateTime updatedAt;
 
   private Order(OrderId id, List<OrderLine> orderLines, CustomerDetails customerDetails, DeliveryMethod deliveryMethod,
-      PaymentStatus paymentStatus, OrderStatus orderStatus, LocalDateTime createdAt, LocalDateTime updatedAt) {
+      PaymentStatus paymentStatus, OrderStatus orderStatus, MpesaTransactionId mpesaTransactionId,
+      String mpesaCheckoutRequestId, LocalDateTime createdAt, LocalDateTime updatedAt) {
 
     if (createdAt.isAfter(LocalDateTime.now())) {
       throw new IllegalArgumentException("Order createdAt cannot be in the future");
@@ -32,13 +33,16 @@ public final class Order {
 
     this.id = id;
     this.orderLines = List.copyOf(orderLines);
-    this.customerDetails = Objects.requireNonNull(customerDetails, "Customer details must be null");
-    this.deliveryMethod = Objects.requireNonNull(deliveryMethod, "Delivrty method must be null");
+    this.customerDetails = Objects.requireNonNull(customerDetails, "Customer details must not be null");
+    this.deliveryMethod = Objects.requireNonNull(deliveryMethod, "Delivery method must not be null");
     this.paymentStatus = paymentStatus;
     this.orderStatus = orderStatus;
-    this.mpesaCheckoutRequestId = null;
+
+    this.mpesaTransactionId = mpesaTransactionId;
+    this.mpesaCheckoutRequestId = mpesaCheckoutRequestId;
+
     this.createdAt = Objects.requireNonNull(createdAt, "Order must have a createdAt timestamp");
-    this.updatedAt = createdAt;
+    this.updatedAt = updatedAt;
   }
 
   public static Order createFromOrderLines(OrderId id, List<OrderLine> orderLines,
@@ -57,8 +61,21 @@ public final class Order {
         deliveryMethod,
         PaymentStatus.AWAITTING_INITIATION,
         OrderStatus.NEW,
+        null,
+        null,
         now,
         now);
+  }
+
+  public static Order reconstitute(
+      OrderId id, List<OrderLine> orderLines, CustomerDetails customerDetails,
+      DeliveryMethod deliveryMethod, PaymentStatus paymentStatus, OrderStatus orderStatus,
+      MpesaTransactionId mpesaTransactionId, String mpesaCheckoutRequestId,
+      LocalDateTime createdAt, LocalDateTime updatedAt) {
+
+    return new Order(
+        id, orderLines, customerDetails, deliveryMethod, paymentStatus, orderStatus,
+        mpesaTransactionId, mpesaCheckoutRequestId, createdAt, updatedAt);
   }
 
   public int getTotalAmountCents() {
@@ -85,10 +102,6 @@ public final class Order {
 
   public void markAsPaid(MpesaTransactionId mpesaTransactionId) {
     Objects.requireNonNull(mpesaTransactionId, "MpesaTransactionId cannot be null");
-    if (mpesaTransactionId.value().isBlank()) {
-      throw new IllegalArgumentException("MpesaTransactionId cannot be blank");
-    }
-    this.mpesaTransactionId = mpesaTransactionId;
 
     if (this.paymentStatus != PaymentStatus.PENDING &&
         this.paymentStatus != PaymentStatus.AWAITTING_INITIATION) {
@@ -101,6 +114,7 @@ public final class Order {
       return;
     }
 
+    this.mpesaTransactionId = mpesaTransactionId;
     this.paymentStatus = PaymentStatus.SUCCESS;
     this.updatedAt = LocalDateTime.now();
   }
@@ -274,10 +288,10 @@ public final class Order {
 
   public static final class CustomerDetails {
     private static final Pattern EMAIL_PATTERN = Pattern.compile("^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+$");
-    private String name;
-    private String phone;
-    private String email;
-    private String address;
+    private final String name;
+    private final String phone;
+    private final String email;
+    private final String address;
 
     public CustomerDetails(String name, String phone,
         String email, String address) {
