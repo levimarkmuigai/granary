@@ -49,7 +49,7 @@ public class CheckoutService extends BaseApplicationService {
 
         String checkOutRequestId = paymentGateway.initiateStkPush(
                 order.getId(),
-                order.getTotalAmountCents(),
+                order.getTotalAmountCents() / 100,
                 order.getCustomerDetails().getPhone());
 
         order.markPaymentInitiated(checkOutRequestId);
