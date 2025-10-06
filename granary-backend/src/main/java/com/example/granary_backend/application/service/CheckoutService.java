@@ -47,7 +47,7 @@ public class CheckoutService extends BaseApplicationService {
             throw new IllegalStateException("Payment can only be initiated for orders in AWAITING_INITIATION status.");
         }
 
-        String checkOutRequestId = paymentGateway.intiateStkPush(
+        String checkOutRequestId = paymentGateway.initiateStkPush(
                 order.getId(),
                 order.getTotalAmountCents(),
                 order.getCustomerDetails().getPhone());
