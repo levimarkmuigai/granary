@@ -1,0 +1,38 @@
+spring:
+  application:
+    name: granary-backend
+  datasource:
+    url: jdbc:postgresql://localhost:5432/granary
+    username: granary
+    password: granary
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+  flyway:
+    enabled: true
+    locations: classpath:db/migration
+    baseline-on-migrate: true
+    baseline-version: 0
+    validate-on-migrate: true
+    clean-disabled: true
+server:
+  port: 8080
+mpesa:
+  is-production: false
+  api:
+    auth-url: https://sandbox.safaricom.co.ke/oauth/v1/generate?grant_type=client_credentials
+    b2c-url: https://sandbox.safaricom.co.ke/mpesa/b2c/v3/paymentrequest
+    result-url: YOUR_PUBLIC_HTTPS_DOMAIN/api/mpesa/b2c-callback
+    queue-timeout-url: YOUR_PUBLIC_HTTPS_DOMAIN/api/mpesa/b2c-timeout
+  credentials:
+    consumer-key: YOUR_APP_CONSUMER_KEY
+    consumer-secret: YOUR_APP_CONSUMER_SECRET
+    short-code: 600XXX
+    initiator-name: testapi
+    initiator-password: PlaintextPassword123
+  security:
+    cert-path: classpath:certs/safaricom_sandbox.cer

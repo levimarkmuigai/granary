@@ -4,15 +4,13 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 public record StkPushResponseDTO(
 
-        @JsonProperty("OriginatorConversionID") String originatorConversationID,
+                @JsonProperty("OriginatorConversionID") String originatorConversationID,
 
-        @JsonProperty("ConversationId") String conversationId,
+                @JsonProperty("ConversationId") String conversationId,
 
-        @JsonProperty("ResponseCode") String responseCode,
+                @JsonProperty("ResponseCode") String responseCode,
 
-        @JsonProperty("ResponseDescription") String responseDescription,
-
-        @JsonProperty("CustomerMessage") String customerMessage
+                @JsonProperty("ResponseDescription") String responseDescription
 
 ) {
 }

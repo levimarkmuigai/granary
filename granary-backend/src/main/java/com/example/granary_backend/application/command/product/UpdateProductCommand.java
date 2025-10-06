@@ -2,9 +2,6 @@ package com.example.granary_backend.application.command.product;
 
 import java.util.Optional;
 
-import org.springframework.stereotype.Component;
-
-@Component
 public class UpdateProductCommand {
 
   private final String productId;
@@ -76,4 +73,3 @@ public class UpdateProductCommand {
   }
 
 }
-
