@@ -1,5 +1,18 @@
 package com.example.granary_backend.infrastructure.external.mpesa.dto;
 
-public class StkPushResponseDTO {
+import com.fasterxml.jackson.annotation.JsonProperty;
 
+public record StkPushResponseDTO(
+
+        @JsonProperty("OriginatorConversionID") String originatorConversationID,
+
+        @JsonProperty("ConversationId") String conversationId,
+
+        @JsonProperty("ResponseCode") String responseCode,
+
+        @JsonProperty("ResponseDescription") String responseDescription,
+
+        @JsonProperty("CustomerMessage") String customerMessage
+
+) {
 }
