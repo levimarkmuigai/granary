@@ -28,6 +28,7 @@ mpesa:
     auth-url: https://sandbox.safaricom.co.ke/oauth/v1/generate?grant_type=client_credentials
     b2c-url: https://sandbox.safaricom.co.ke/mpesa/b2c/v3/paymentrequest
     result-url: YOUR_PUBLIC_HTTPS_DOMAIN/api/mpesa/b2c-callback
+    stk-push-url: https://sandbox.safaricom.co.ke/mpesa/stkpush/v1/processrequest
     queue-timeout-url: YOUR_PUBLIC_HTTPS_DOMAIN/api/mpesa/b2c-timeout
   credentials:
     consumer-key: YOUR_APP_CONSUMER_KEY

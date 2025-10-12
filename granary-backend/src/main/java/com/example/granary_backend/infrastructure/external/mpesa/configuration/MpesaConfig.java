@@ -24,13 +24,15 @@ public class MpesaConfig {
         private final String b2cUrl;
         private final String queueTimeoutUrl;
         private final String resultUrl;
+        private final String stkPushUrl;
 
         @ConstructorBinding
-        public Api(String authUrl, String b2cUrl, String queueTimeoutUrl, String resultUrl) {
+        public Api(String authUrl, String b2cUrl, String queueTimeoutUrl, String resultUrl, String stkPushUrl) {
             this.authUrl = authUrl;
             this.b2cUrl = b2cUrl;
             this.queueTimeoutUrl = queueTimeoutUrl;
             this.resultUrl = resultUrl;
+            this.stkPushUrl = stkPushUrl;
         }
 
         public String getAuthUrl() {
@@ -47,6 +49,10 @@ public class MpesaConfig {
 
         public String getResultUrl() {
             return resultUrl;
+        }
+
+        public String getStkPushUrl() {
+            return stkPushUrl;
         }
 
     }
