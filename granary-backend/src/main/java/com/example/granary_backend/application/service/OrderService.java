@@ -17,6 +17,7 @@ import com.example.granary_backend.application.util.CommandUtils;
 import com.example.granary_backend.application.util.DomainMapper;
 import com.example.granary_backend.application.validation.CommandValidator;
 import com.example.granary_backend.domain.model.Order;
+import com.example.granary_backend.domain.model.Order.PaymentStatus;
 import com.example.granary_backend.domain.model.Product;
 import com.example.granary_backend.domain.model.value.OrderId;
 import com.example.granary_backend.domain.model.value.ProductId;
@@ -117,4 +118,26 @@ public class OrderService extends BaseApplicationService {
                 return order.getId();
         }
 
+        @Transactional(readOnly = true)
+        public void verifyOrderForPayment(OrderId orderId, int requestedAmount) {
+
+                Order order = orderRepository.findById(orderId)
+                                .orElseThrow(() -> new EntityNotFoundException(
+                                                "Order with id: " + orderId.getValue() + " not found."));
+
+                if (order.getPaymentStatus() != PaymentStatus.PENDING) {
+                        throw new IllegalStateException(
+                                        "Payment status must be PENDING to initiate payment. Current status: " +
+                                                        order.getPaymentStatus());
+                }
+
+                int orderAmountInShillings = order.getTotalAmountCents();
+
+                if (requestedAmount != orderAmountInShillings) {
+                        throw new IllegalStateException(String.format(
+                                        "Requested amount (%d) does not match the order total amount (%d). Possible tampering detected.",
+                                        requestedAmount,
+                                        orderAmountInShillings));
+                }
+        }
 }
