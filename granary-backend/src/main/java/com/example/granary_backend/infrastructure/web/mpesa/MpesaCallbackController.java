@@ -8,6 +8,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.example.granary_backend.infrastructure.external.mpesa.dto.StkCallbackDTO;
+
+import jakarta.validation.Valid;
+
 import org.springframework.web.bind.annotation.PostMapping;
 
 @RestController
@@ -24,8 +27,8 @@ public class MpesaCallbackController {
 
     @PostMapping("/stk-callback")
     public ResponseEntity<MpesaCallbackResponse> handleStkPushCallback(
-            @RequestBody StkCallbackDTO callbackDTO) {
-        log.info("Received M-pesa Callback from CheckoutRequestID: {}",
+            @RequestBody @Valid StkCallbackDTO callbackDTO) {
+        log.info("Received M-pesa Callback for ConversionID: {}",
                 callbackDTO.result().conversationID());
 
         try {
