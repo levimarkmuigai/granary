@@ -40,7 +40,7 @@ public class DarajaHttpClient {
         return cachedToken;
     }
 
-    private String fetchNewAccessToken() {
+    synchronized private String fetchNewAccessToken() {
         String credentials = mpesaConfig.getCredentials().getConsumerKey() + ":"
                 + mpesaConfig.getCredentials().getConsumerSecret();
 
@@ -76,7 +76,7 @@ public class DarajaHttpClient {
         throw new RuntimeException("Failed to retrieve M-Pesa access token.");
     }
 
-    public StkPushResponseDTO sndStkPush(StkPushRequestDTO requestBody) {
+    public StkPushResponseDTO sendStkPush(StkPushRequestDTO requestBody) {
         String accessToken = getAccessToken();
 
         HttpHeaders headers = new HttpHeaders();

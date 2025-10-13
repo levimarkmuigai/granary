@@ -63,14 +63,17 @@ public class MpesaConfig {
         private final String shortCode;
         private final String initiatorName;
         private final String initiatorPassword;
+        private final String passKey;
 
+        @ConstructorBinding
         public Credentials(String consumerKey, String consumerSecret, String shortCode, String initiatorName,
-                String initiatorPassword) {
+                String initiatorPassword, String passKey) {
             this.consumerKey = consumerKey;
             this.consumerSecret = consumerSecret;
             this.shortCode = shortCode;
             this.initiatorName = initiatorName;
             this.initiatorPassword = initiatorPassword;
+            this.passKey = passKey;
         }
 
         public String getConsumerKey() {
@@ -91,6 +94,10 @@ public class MpesaConfig {
 
         public String getInitiatorPassword() {
             return initiatorPassword;
+        }
+
+        public String getPassKey() {
+            return passKey;
         }
 
     }
