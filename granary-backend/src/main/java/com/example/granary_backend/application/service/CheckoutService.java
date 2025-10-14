@@ -11,6 +11,7 @@ import com.example.granary_backend.application.service.base.BaseApplicationServi
 import com.example.granary_backend.application.validation.CommandValidator;
 import com.example.granary_backend.domain.model.Order;
 import com.example.granary_backend.domain.model.Order.PaymentStatus;
+import com.example.granary_backend.domain.model.value.MpesaTransactionId;
 import com.example.granary_backend.domain.model.value.OrderId;
 import com.example.granary_backend.domain.port.OrderRepository;
 import com.example.granary_backend.domain.port.PaymentGateway;
@@ -56,6 +57,36 @@ public class CheckoutService extends BaseApplicationService {
         orderRepository.save(order);
 
         return checkOutRequestId;
+    }
+
+    public void handlePaymentSuccess(String orderIdString, String transactionId,
+            int amountPaid) {
+        OrderId orderId = OrderId.fromString(orderIdString);
+
+        Order order = orderRepository.findById(orderId)
+                .orElseThrow(() -> new EntityNotFoundException(
+                        "Order not found for M-Pesa callback with ID: " + orderId.getValue()));
+
+        if (order.getPaymentStatus() == PaymentStatus.SUCCESS) {
+            throw new IllegalStateException("Order " + orderId.getValue() + " is already marked as paid.");
+        }
+
+        if (order.getTotalAmountCents() != amountPaid) {
+            throw new IllegalStateException(String.format(
+                    "Payment amount mismatch for Order %s. Expected: %d, Received: %d. Audit required.",
+                    orderId.getValue(),
+                    order.getTotalAmountCents(),
+                    amountPaid));
+        }
+
+        MpesaTransactionId mpesaTransactionId = new MpesaTransactionId(transactionId);
+
+        order.markAsPaid(mpesaTransactionId, amountPaid);
+
+        orderRepository.save(order);
+
+        // TODO: Post Success orchestration (e.g., publish OrderPaidEvent)
+
     }
 
     public void handlePaymentFaliure(String orderIdString) {

@@ -100,8 +100,14 @@ public final class Order {
     this.updatedAt = LocalDateTime.now();
   }
 
-  public void markAsPaid(MpesaTransactionId mpesaTransactionId) {
+  public void markAsPaid(MpesaTransactionId mpesaTransactionId, int amountPaid) {
     Objects.requireNonNull(mpesaTransactionId, "MpesaTransactionId cannot be null");
+
+    if (this.getTotalAmountCents() != amountPaid) {
+      throw new IllegalStateException(
+          "Payment amount mismatch during markAsPaid. Expected: "
+              + this.getTotalAmountCents() + ", Received: " + amountPaid);
+    }
 
     if (this.paymentStatus != PaymentStatus.PENDING &&
         this.paymentStatus != PaymentStatus.AWAITTING_INITIATION) {
