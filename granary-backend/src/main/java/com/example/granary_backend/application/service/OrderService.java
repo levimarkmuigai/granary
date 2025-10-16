@@ -92,8 +92,7 @@ public class OrderService extends BaseApplicationService {
                 Order order = Order.createFromOrderLines(
                                 OrderId.createNew(),
                                 orderLines,
-                                customerDetails,
-                                command.getDeliveryMethod());
+                                customerDetails);
 
                 orderRepository.save(order);
 

@@ -14,8 +14,8 @@ public final class Order {
   private final OrderId id;
   private List<OrderLine> orderLines;
   private CustomerDetails customerDetails;
-  private DeliveryMethod deliveryMethod;
 
+  private DeliveryStatus deliveryStatus;
   private PaymentStatus paymentStatus;
   private OrderStatus orderStatus;
   private MpesaTransactionId mpesaTransactionId;
@@ -23,7 +23,7 @@ public final class Order {
   private final LocalDateTime createdAt;
   private LocalDateTime updatedAt;
 
-  private Order(OrderId id, List<OrderLine> orderLines, CustomerDetails customerDetails, DeliveryMethod deliveryMethod,
+  private Order(OrderId id, List<OrderLine> orderLines, CustomerDetails customerDetails, DeliveryStatus deliveryStatus,
       PaymentStatus paymentStatus, OrderStatus orderStatus, MpesaTransactionId mpesaTransactionId,
       String mpesaCheckoutRequestId, LocalDateTime createdAt, LocalDateTime updatedAt) {
 
@@ -34,7 +34,8 @@ public final class Order {
     this.id = id;
     this.orderLines = List.copyOf(orderLines);
     this.customerDetails = Objects.requireNonNull(customerDetails, "Customer details must not be null");
-    this.deliveryMethod = Objects.requireNonNull(deliveryMethod, "Delivery method must not be null");
+
+    this.deliveryStatus = deliveryStatus;
     this.paymentStatus = paymentStatus;
     this.orderStatus = orderStatus;
 
@@ -46,7 +47,7 @@ public final class Order {
   }
 
   public static Order createFromOrderLines(OrderId id, List<OrderLine> orderLines,
-      CustomerDetails customerDetails, DeliveryMethod deliveryMethod) {
+      CustomerDetails customerDetails) {
 
     if (orderLines == null || orderLines.isEmpty()) {
       throw new IllegalArgumentException("Order must have at least one order line");
@@ -58,7 +59,7 @@ public final class Order {
         id,
         orderLines,
         customerDetails,
-        deliveryMethod,
+        DeliveryStatus.PENDING,
         PaymentStatus.AWAITTING_INITIATION,
         OrderStatus.NEW,
         null,
@@ -69,12 +70,12 @@ public final class Order {
 
   public static Order reconstitute(
       OrderId id, List<OrderLine> orderLines, CustomerDetails customerDetails,
-      DeliveryMethod deliveryMethod, PaymentStatus paymentStatus, OrderStatus orderStatus,
+      DeliveryStatus deliveryStatus, PaymentStatus paymentStatus, OrderStatus orderStatus,
       MpesaTransactionId mpesaTransactionId, String mpesaCheckoutRequestId,
       LocalDateTime createdAt, LocalDateTime updatedAt) {
 
     return new Order(
-        id, orderLines, customerDetails, deliveryMethod, paymentStatus, orderStatus,
+        id, orderLines, customerDetails, deliveryStatus, paymentStatus, orderStatus,
         mpesaTransactionId, mpesaCheckoutRequestId, createdAt, updatedAt);
   }
 
@@ -189,11 +190,11 @@ public final class Order {
     this.updatedAt = LocalDateTime.now();
   }
 
-  public void updateDeliveryMethod(DeliveryMethod newMethod) {
+  public void updateDeliveryStatus(DeliveryStatus newMethod) {
     if (this.orderStatus != OrderStatus.NEW && this.orderStatus != OrderStatus.PACKAGING) {
       throw new IllegalStateException("Delivery method can only be updated for NEW or PACKAGING orders.");
     }
-    this.deliveryMethod = Objects.requireNonNull(newMethod, "New delivery method cannot be null");
+    this.deliveryStatus = Objects.requireNonNull(newMethod, "New delivery method cannot be null");
     this.updatedAt = LocalDateTime.now();
   }
 
@@ -225,8 +226,8 @@ public final class Order {
     return updatedAt;
   }
 
-  public DeliveryMethod getDeliveryMethod() {
-    return deliveryMethod;
+  public DeliveryStatus getDeliveryStatus() {
+    return deliveryStatus;
   }
 
   public PaymentStatus getPaymentStatus() {
@@ -352,9 +353,9 @@ public final class Order {
     }
   }
 
-  public enum DeliveryMethod {
-    PICKUP,
-    DELIVERY
+  public enum DeliveryStatus {
+    DELIVERED,
+    PENDING
   }
 
   public enum PaymentStatus {

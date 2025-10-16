@@ -1,6 +1,5 @@
 -- Enable UUID generation
 CREATE EXTENSION IF NOT EXISTS "pgcrypto";
-
 -- Products table
 CREATE TABLE products (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
@@ -14,7 +13,6 @@ CREATE TABLE products (
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
-
 -- Orders table
 CREATE TABLE orders (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
@@ -26,12 +24,11 @@ CREATE TABLE orders (
     customer_email VARCHAR(100) NOT NULL,
     customer_address TEXT NOT NULL,
     delivery_method VARCHAR(20) CHECK (delivery_method IN ('pickup', 'delivery')),
-    payment_status VARCHAR(20) DEFAULT 'pending'
-        CHECK (payment_status IN ('pending','paid','failed')),
-    order_status VARCHAR(20) DEFAULT 'new'
-        CHECK (order_status IN ('new','packaging','ready','delivered')),
+    payment_status VARCHAR(20) DEFAULT 'pending' CHECK (payment_status IN ('pending', 'paid', 'failed')),
+    order_status VARCHAR(20) DEFAULT 'new' CHECK (
+        order_status IN ('new', 'packaging', 'ready', 'delivered')
+    ),
     mpesa_transaction_id VARCHAR(100),
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
-

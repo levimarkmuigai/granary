@@ -8,7 +8,7 @@ import java.util.UUID;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
-import com.example.granary_backend.domain.model.Order.DeliveryMethod;
+import com.example.granary_backend.domain.model.Order.DeliveryStatus;
 import com.example.granary_backend.domain.model.Order.OrderStatus;
 import com.example.granary_backend.domain.model.Order.PaymentStatus;
 
@@ -46,8 +46,8 @@ public class OrderEntity {
   private LocalDateTime updatedAt;
 
   @Enumerated(EnumType.STRING)
-  @Column(name = "delivery_method", nullable = false)
-  private DeliveryMethod deliveryMethod;
+  @Column(name = "delivery_status", nullable = false)
+  private DeliveryStatus deliveryStatus;
 
   @Enumerated(EnumType.STRING)
   @Column(name = "payment_status", nullable = false)
@@ -74,7 +74,7 @@ public class OrderEntity {
 
   public OrderEntity(UUID id, List<OrderLineEntity> orderLines,
       String mpesaTransactionId, LocalDateTime createdAt, LocalDateTime updatedAt,
-      DeliveryMethod deliveryMethod, PaymentStatus paymentStatus, OrderStatus orderStatus,
+      DeliveryStatus deliveryStatus, PaymentStatus paymentStatus, OrderStatus orderStatus,
       String customerName, String customerPhone, String customerAddress, String customerEmail) {
 
     this.id = id;
@@ -86,7 +86,7 @@ public class OrderEntity {
     this.mpesaTransactionId = mpesaTransactionId;
     this.createdAt = createdAt;
     this.updatedAt = updatedAt;
-    this.deliveryMethod = deliveryMethod;
+    this.deliveryStatus = deliveryStatus;
     this.paymentStatus = paymentStatus;
     this.orderStatus = orderStatus;
     this.customerName = customerName;
@@ -119,8 +119,8 @@ public class OrderEntity {
     return this.updatedAt;
   }
 
-  public DeliveryMethod getDeliveryMethod() {
-    return this.deliveryMethod;
+  public DeliveryStatus getDeliveryStatus() {
+    return this.deliveryStatus;
   }
 
   public PaymentStatus getPaymentStatus() {
@@ -159,8 +159,8 @@ public class OrderEntity {
     this.mpesaTransactionId = mpesaTransactionId;
   }
 
-  public void setDeliveryMethod(DeliveryMethod deliveryMethod) {
-    this.deliveryMethod = deliveryMethod;
+  public void setDeliveryStatus(DeliveryStatus deliveryStatus) {
+    this.deliveryStatus = deliveryStatus;
   }
 
   public void setPaymentStatus(PaymentStatus paymentStatus) {

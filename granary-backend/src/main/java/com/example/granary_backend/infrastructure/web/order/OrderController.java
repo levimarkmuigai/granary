@@ -33,9 +33,11 @@ public class OrderController {
 
                 OrderId newOrderId = orderService.createOrder(command);
 
+                final int DELIVERY_CHARGE_CENTS = 500;
+
                 OrderResponse response = new OrderResponse(
                                 newOrderId.getValue().toString(),
-                                request.deliveryMethod().equals("") ? 0 : 500,
+                                DELIVERY_CHARGE_CENTS,
                                 request.customerDetails().name(),
                                 "CREATED",
                                 true);
@@ -59,7 +61,6 @@ public class OrderController {
 
                 return new CreateOrderCommand(
                                 lineCommands,
-                                customerDetailsCommand,
-                                request.deliveryMethod());
+                                customerDetailsCommand);
         }
 }

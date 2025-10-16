@@ -37,15 +37,13 @@ public class CreateOrderCommandValidator implements CommandValidator<CreateOrder
     } else {
       validateCustomerDetails(errors, customerDetails);
     }
-    if (command.getDeliveryMethod() == null) {
-      errors.put("deliveryMethod", "Delivery method is required.");
-    }
 
     if (!errors.isEmpty()) {
       throw new InvalidCommandException(
-        "Order creation input is invalid. Please correct the listed fields. " + errors.toString());
+          "Order creation input is invalid. Please correct the listed fields. " + errors.toString());
     }
   }
+
   private void validateCustomerDetails(Map<String, String> errors, CustomerDetailsCommand details) {
     ValidationRules.checkRequired(errors, "customerDetails.name", details.getName());
     ValidationRules.checkRequired(errors, "customerDetails.email", details.getEmail());
@@ -56,7 +54,7 @@ public class CreateOrderCommandValidator implements CommandValidator<CreateOrder
       ValidationRules.checkEmailFormat(errors, "customerDetails.email", details.getEmail());
     }
     if (details.getPhone() != null && !details.getPhone().isBlank()) {
-    ValidationRules.checkPhoneFormat(errors, "customerDetails.phone", details.getPhone());
+      ValidationRules.checkPhoneFormat(errors, "customerDetails.phone", details.getPhone());
     }
   }
 
@@ -64,17 +62,17 @@ public class CreateOrderCommandValidator implements CommandValidator<CreateOrder
 
     final AtomicInteger index = new AtomicInteger(0);
 
-    lines.forEach(line  ->{
+    lines.forEach(line -> {
       int i = index.getAndIncrement();
       String prefix = "orderLines[" + i + "].";
 
       String productId = line.getProductId();
-      if(productId == null || productId.trim().isBlank()) {
+      if (productId == null || productId.trim().isBlank()) {
         errors.put(prefix + "productId", "Product ID is required.");
       }
 
       int quantity = line.getQuantity();
-      if(quantity <= 0) {
+      if (quantity <= 0) {
         errors.put(prefix + "quantity", "Quantity must be a positive integer.");
       }
 

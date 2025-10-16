@@ -27,7 +27,7 @@ public final class OrderMapper {
     OrderEntity entity = new OrderEntity();
     entity.setId(order.getId().getValue());
 
-    entity.setDeliveryMethod(order.getDeliveryMethod());
+    entity.setDeliveryStatus(order.getDeliveryStatus());
     entity.setPaymentStatus(order.getPaymentStatus());
     entity.setOrderStatus(order.getOrderStatus());
 
@@ -90,7 +90,7 @@ public final class OrderMapper {
         OrderId.from(entity.getId()),
         orderLines,
         customerDetails,
-        entity.getDeliveryMethod(),
+        entity.getDeliveryStatus(),
         entity.getPaymentStatus(),
         entity.getOrderStatus(),
         mpesaId,

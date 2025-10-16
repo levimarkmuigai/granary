@@ -35,8 +35,7 @@ public final class OrderMapper {
 
     return new CreateOrderCommand(
         orderLineCommands,
-        customerDetails,
-        dto.deliveryMethod());
+        customerDetails);
   }
 
   public MarkOrderPaidCommand toMarkOrderPaidCommand(MarkOrderPaidRequestDTO dto) {
@@ -80,7 +79,7 @@ public final class OrderMapper {
         customer.getEmail(),
         customer.getPhone(),
         customer.getAddress(),
-        order.getDeliveryMethod().name().toLowerCase(),
+        order.getDeliveryStatus().name(),
         order.getPaymentStatus().name(),
         order.getOrderStatus().name(),
         mpesaTransactionId,

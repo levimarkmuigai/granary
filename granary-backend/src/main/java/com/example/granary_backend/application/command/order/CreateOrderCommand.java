@@ -3,26 +3,20 @@ package com.example.granary_backend.application.command.order;
 import java.util.List;
 import java.util.Objects;
 
-import com.example.granary_backend.domain.model.Order.DeliveryMethod;
-
 public final class CreateOrderCommand {
 
   private final List<OrderLineCommand> orderLines;
   private final CustomerDetailsCommand customerDetails;
-  private final DeliveryMethod deliveryMethod;
 
   public CreateOrderCommand(
       List<OrderLineCommand> orderLines,
-      CustomerDetailsCommand customerDetails,
-      DeliveryMethod deliveryMethod) {
+      CustomerDetailsCommand customerDetails) {
 
     Objects.requireNonNull(orderLines, "orderLines cannot be null");
     Objects.requireNonNull(customerDetails, "customerDetailsCommand cannot be null");
-    Objects.requireNonNull(deliveryMethod, "deliveryMethod cannot be null");
 
     this.orderLines = List.copyOf(orderLines);
     this.customerDetails = customerDetails;
-    this.deliveryMethod = deliveryMethod;
   }
 
   // Getters
@@ -34,16 +28,11 @@ public final class CreateOrderCommand {
     return customerDetails;
   }
 
-  public DeliveryMethod getDeliveryMethod() {
-    return deliveryMethod;
-  }
-
   @Override
   public String toString() {
     return "CreateOrderCommand{" +
         "orderLines='" + orderLines + '\'' +
         ", customerDetails='" + customerDetails + '\'' +
-        ", deliveryMethod='" + deliveryMethod + '\'' +
         '}';
   }
 
