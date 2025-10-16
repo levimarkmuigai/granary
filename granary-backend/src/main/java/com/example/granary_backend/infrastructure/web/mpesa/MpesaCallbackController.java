@@ -26,20 +26,19 @@ public class MpesaCallbackController {
     }
 
     @PostMapping("/stk-callback")
-    public ResponseEntity<MpesaCallbackResponse> handleStkPushCallback(
+    public ResponseEntity<Void> handleStkPushCallback(
             @RequestBody @Valid StkCallbackDTO callbackDTO) {
         log.info("Received M-pesa Callback for ConversionID: {}",
                 callbackDTO.result().conversationID());
 
         try {
             callbackHandler.handle(callbackDTO);
-
-            return ResponseEntity.ok(MpesaCallbackResponse.success());
         } catch (Exception e) {
-            log.error("Error encountered during callback processing, returning OK to M-Pesa.", e);
-
-            return ResponseEntity.ok(MpesaCallbackResponse.success());
+            log.error("Error processing M-Pesa callback internally. Returning 200 OK to M-Pesa to acknowledge receipt.",
+                    e);
         }
+
+        return ResponseEntity.ok().build();
     }
 
 }

@@ -112,4 +112,26 @@ public class CheckoutService extends BaseApplicationService {
         orderRepository.save(order);
     }
 
+    @Transactional(readOnly = true)
+    public void verifyOrderForPayment(OrderId orderId, int requestedAmount) {
+
+        Order order = orderRepository.findById(orderId)
+                .orElseThrow(() -> new EntityNotFoundException(
+                        "Order with id: " + orderId.getValue() + " not found."));
+
+        if (order.getPaymentStatus() != PaymentStatus.PENDING) {
+            throw new IllegalStateException(
+                    "Payment status must be PENDING to initiate payment. Current status: " +
+                            order.getPaymentStatus());
+        }
+
+        int orderAmountInShillings = order.getTotalAmountCents();
+
+        if (requestedAmount != orderAmountInShillings) {
+            throw new IllegalStateException(String.format(
+                    "Requested amount (%d) does not match the order total amount (%d). Possible tampering detected.",
+                    requestedAmount,
+                    orderAmountInShillings));
+        }
+    }
 }
