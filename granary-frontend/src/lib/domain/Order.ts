@@ -11,12 +11,14 @@ export interface OrderLineCommand {
     quantity: number;
 }
 
-export interface CustomerDetails{
-    name: string;
-    email: string;
-    phone: string;
-    address: string;
+export interface CustomerDetails {
+  name: string;
+  email: string;
+  phone: string;
+  address: string;
+  [key: string]: string;
 }
+
 
 export interface OrderLineCommand {
     productId: EntityId;

@@ -18,8 +18,14 @@ spring:
     baseline-version: 0
     validate-on-migrate: true
     clean-disabled: true
+
 server:
   port: 8080
+
+app:
+  cors:
+    allowed-origin: ${APP_CORS_ALLOWED_ORIGIN:http://localhost:5173}
+
 mpesa:
   is-production: false
   api:

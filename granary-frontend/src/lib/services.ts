@@ -1,13 +1,13 @@
 import type { OrderServicePort } from "./application/OrderServicePort";
+import type { ProductServicePort } from "./application/ProductServicePort";
 import { HttpOrderAdapter } from "./infrastrucuture/api/HttpOrderAdapter";
-import { MockOrderAdapter } from "./infrastrucuture/api/MockOrderAdapter";
+import { HttpProductAdapter } from "./infrastrucuture/api/HttpProductAdapter";
 
-const USE_MOCK_ADAPTER = true;
+const orderAdapterInstance: OrderServicePort = new HttpOrderAdapter();
 
-const orderAdapterInstance: OrderServicePort = USE_MOCK_ADAPTER 
-? new MockOrderAdapter : 
-new HttpOrderAdapter();
+const productAdapterInstance: ProductServicePort = new HttpProductAdapter()
 
 export const services = {
-    orderService: orderAdapterInstance
+    orderService: orderAdapterInstance,
+    productService: productAdapterInstance
 }

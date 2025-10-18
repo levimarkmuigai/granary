@@ -16,6 +16,6 @@ const initialOrderCreationState: OrderCreationStore = {
 export const OrderCreationStore: Writable<OrderCreationStore> = writable(initialOrderCreationState);
 
 
-export function restOrderCreationStore() {
+export function resetOrderCreationState() {
     OrderCreationStore.set(initialOrderCreationState);
 }

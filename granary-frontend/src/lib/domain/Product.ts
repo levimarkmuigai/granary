@@ -1,9 +1,28 @@
-export type EntityId =string;
+export type EntityId = string;
 
 export interface Product {
-    id: EntityId;
+    
+    id: EntityId; 
+    
+    
     name: string;
+    
+    
+    size: string;
+    
+   
     priceCents: number;
+    
+   
     stockQuantity: number;
-    imageUrl?: string;
+    
+    
+    lowStockAlert: number; 
+    
+    imageUrl: string | null; 
+    active: boolean; 
+    
+    
+    createdAt: string; 
+    updatedAt: string;
 }

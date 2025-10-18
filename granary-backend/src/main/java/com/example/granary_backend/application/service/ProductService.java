@@ -1,5 +1,6 @@
 package com.example.granary_backend.application.service;
 
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
@@ -79,6 +80,11 @@ public class ProductService extends BaseApplicationService {
 
     productRepository.save(product);
     return product.getProductId();
+  }
+
+  @Transactional(readOnly = true)
+  public List<Product> getAvailableProducts() {
+    return productRepository.findActiveProducts();
   }
 
   private ProductId safelyParseProductId(String rawId) {
