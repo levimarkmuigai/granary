@@ -10,8 +10,7 @@ spring:
     hibernate:
       ddl-auto: update
     show-sql: true
-
-  flyway:
+  flyway: # <-- Correctly nested under 'spring'
     enabled: true
     locations: classpath:db/migration
     baseline-on-migrate: true
@@ -21,6 +20,12 @@ spring:
 
 server:
   port: 8080
+
+application:
+  security:
+    jwt:
+      secret-key: ZJ7iN0XgB1RkC5yTf2sLwA6qW3mG8vHj9xYdO4tP0uEaM7zS5bVpQyXrCgIhEeFf
+      expiration: 86400000
 
 app:
   cors:
