@@ -1,11 +1,16 @@
 <script lang="ts">
   import { footerLinks, contactInfo, socialLinks } from "$lib/config/footer";
+
   const currentYear = new Date().getFullYear();
 
   // Filter out FAQ, Delivery, and Contact links
   const filteredLinks = footerLinks.filter(
     (link) => !["FAQ", "Delivery", "Contact"].includes(link.label)
   );
+
+  function goToAdmin() {
+    window.open("/admin/dashboard", "_blank", "noopener,noreferrer");
+  }
 </script>
 
 <footer class="bg-white border-t border-gray-200 mt-20">
@@ -14,7 +19,11 @@
   >
     <!-- Brand -->
     <div class="flex flex-col gap-2 items-center lg:items-start">
-      <div class="flex items-center gap-2 mb-2">
+      <button
+        type="button"
+        class="flex items-center gap-2 mb-2"
+        on:click={goToAdmin}
+      >
         <svg
           xmlns="http://www.w3.org/2000/svg"
           class="w-6 h-6 text-zing-yellow"
@@ -30,7 +39,7 @@
           />
         </svg>
         <span class="text-2xl font-bold text-black tracking-tight">Zing</span>
-      </div>
+      </button>
       <p class="text-sm text-gray-600">Low Calorie, Homemade Granola</p>
     </div>
 

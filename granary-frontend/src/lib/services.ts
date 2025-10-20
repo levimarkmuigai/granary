@@ -4,10 +4,9 @@ import { HttpOrderAdapter } from "./infrastrucuture/api/HttpOrderAdapter";
 import { HttpProductAdapter } from "./infrastrucuture/api/HttpProductAdapter";
 
 const orderAdapterInstance: OrderServicePort = new HttpOrderAdapter();
-
-const productAdapterInstance: ProductServicePort = new HttpProductAdapter()
+const productAdapterInstance: ProductServicePort = new HttpProductAdapter();
 
 export const services = {
     orderService: orderAdapterInstance,
-    productService: productAdapterInstance
-}
+    productService: productAdapterInstance,
+};

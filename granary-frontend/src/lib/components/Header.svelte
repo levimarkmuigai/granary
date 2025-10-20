@@ -19,7 +19,7 @@
   $: cartItemCount = $cartStore.length;
   $: currentPath = $page.url.pathname;
 
-  // Navigation links (removed About page)
+  // Navigation links
   const navLinks = [
     { href: "/#products", label: "Shop", scroll: true },
     { href: "/terms", label: "Terms", scroll: false },

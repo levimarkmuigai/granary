@@ -15,7 +15,6 @@ export class HttpProductAdapter implements ProductServicePort {
             throw new Error('Could not fetch product catalog from API.');
         }
 
-        
         const products = await response.json() as Product[];
         return products;
     }
@@ -27,12 +26,62 @@ export class HttpProductAdapter implements ProductServicePort {
         
         if (!response.ok) {
             if (response.status === 404) {
-                 throw new Error(`Product not found with ID: ${productId}`);
+                throw new Error(`Product not found with ID: ${productId}`);
             }
             throw new Error('Failed to fetch product details from API.');
         }
 
         const product = await response.json() as Product;
         return product;
+    }
+
+    async createProduct(product: Product): Promise<Product> {
+        const url = `${this.API_BASE}/products`;
+        
+        const response = await fetch(url, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(product)
+        });
+        
+        if (!response.ok) {
+            const errorBody = await response.json();
+            throw new Error(errorBody.message || `Failed to create product. Status: ${response.status}`);
+        }
+        
+        return await response.json() as Product;
+    }
+
+    async updateProduct(productId: EntityId, updates: Partial<Product>): Promise<Product> {
+        const url = `${this.API_BASE}/products/${productId}`;
+        
+        const response = await fetch(url, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(updates)
+        });
+        
+        if (!response.ok) {
+            const errorBody = await response.json();
+            throw new Error(errorBody.message || `Failed to update product. Status: ${response.status}`);
+        }
+        
+        return await response.json() as Product;
+    }
+
+    async deleteProduct(productId: EntityId): Promise<void> {
+        const url = `${this.API_BASE}/products/${productId}`;
+        
+        const response = await fetch(url, {
+            method: 'DELETE'
+        });
+        
+        if (!response.ok) {
+            throw new Error(`Failed to delete product. Status: ${response.status}`);
+        }
     }
 }
