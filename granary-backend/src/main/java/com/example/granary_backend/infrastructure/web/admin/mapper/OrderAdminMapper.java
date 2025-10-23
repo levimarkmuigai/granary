@@ -12,7 +12,7 @@ import com.example.granary_backend.infrastructure.web.admin.dto.OrderItemDTO;
 import org.springframework.stereotype.Component;
 
 @Component
-public class OrderMapper {
+public class OrderAdminMapper {
 
     private static final BigDecimal CENTS_TO_UNIT_FACTOR = new BigDecimal("100");
 

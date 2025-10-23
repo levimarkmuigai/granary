@@ -10,7 +10,7 @@ import com.example.granary_backend.infrastructure.persistence.repository.OrderJp
 import com.example.granary_backend.infrastructure.persistence.repository.ProductJpaRepository;
 import com.example.granary_backend.infrastructure.web.admin.dto.DashboardSummaryDTO;
 import com.example.granary_backend.infrastructure.web.admin.dto.OrderDTO;
-import com.example.granary_backend.infrastructure.web.admin.mapper.OrderMapper;
+import com.example.granary_backend.infrastructure.web.admin.mapper.OrderAdminMapper;
 
 import jakarta.persistence.EntityNotFoundException;
 import java.util.List;
@@ -22,10 +22,10 @@ public class OrderAdminService {
 
     private final OrderJpaRepository orderRepository;
     private final ProductJpaRepository productRepository;
-    private final OrderMapper orderMapper;
+    private final OrderAdminMapper orderMapper;
 
     public OrderAdminService(OrderJpaRepository orderRepository, ProductJpaRepository productRepository,
-            OrderMapper orderMapper) {
+            OrderAdminMapper orderMapper) {
         this.orderRepository = orderRepository;
         this.productRepository = productRepository;
         this.orderMapper = orderMapper;
